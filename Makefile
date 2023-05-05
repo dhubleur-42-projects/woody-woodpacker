@@ -1,9 +1,11 @@
-NAME		=	woody
+NAME		=	woody_woodpacker
 
 C_SRCS		= 	main.c
 
 ASM_SRCS	=	
 
+TEST_SRC	=	test/basic_exec.c
+TEST_NAME	=	test/basic_exec
 
 _OBJS		=	${C_SRCS:.c=.o} ${ASM_SRCS:.s=.o}
 OBJS		=	$(addprefix build/, $(_OBJS))
@@ -35,9 +37,14 @@ $(NAME)	:	$(OBJS)
 
 -include $(OBJS_DEPEND)
 
+test	:	all $(TEST_NAME)
+	./$(NAME) $(TEST_NAME)
+
+$(TEST_NAME)	:	$(TEST_SRC)
+	$(CC) $(CFLAGS) $(TEST_SRC) -o $(TEST_NAME)
 
 clean	:	
-	rm -Rf build/
+	rm -Rf build/ $(TEST_NAME)
 
 
 fclean	:	clean
@@ -45,4 +52,5 @@ fclean	:	clean
 
 re		:	fclean ${NAME}
 
-.PHONY	:	all clean fclean re
+
+.PHONY	:	all clean fclean re test
