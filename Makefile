@@ -11,7 +11,7 @@ _OBJS		=	${C_SRCS:.c=.o} ${ASM_SRCS:.s=.o}
 OBJS		=	$(addprefix build/, $(_OBJS))
 OBJS_DEPEND	=	${OBJS:.o=.d}
 
-CC			=	cc
+CC			=	clang
 CFLAGS		=   -Wall -Wextra -Werror
 INCLUDE		=	-I includes/
 
