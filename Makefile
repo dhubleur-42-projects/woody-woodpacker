@@ -1,0 +1,48 @@
+NAME		=	woody
+
+C_SRCS		= 	main.c
+
+ASM_SRCS	=	
+
+
+_OBJS		=	${C_SRCS:.c=.o} ${ASM_SRCS:.s=.o}
+OBJS		=	$(addprefix build/, $(_OBJS))
+OBJS_DEPEND	=	${OBJS:.o=.d}
+
+CC			=	cc
+CFLAGS		=   -Wall -Wextra -Werror
+INCLUDE		=	-I includes/
+
+ASMC		= nasm
+ASMFLAGS	= -felf64
+
+all		:	$(NAME)
+
+build/%.o	:	srcs/C/%.c
+	@if [ ! -d $(dir $@) ]; then\
+		mkdir -p $(dir $@);\
+	fi
+	$(CC) ${CFLAGS} -MMD -MF $(@:.o=.d) ${INCLUDE} -c $< -o $@
+
+build/%.o	:	srcs/ASM/%.s
+	@if [ ! -d $(dir $@) ]; then\
+		mkdir -p $(dir $@);\
+	fi
+	$(ASMC) $(ASMFLAGS) $< -o $@
+
+$(NAME)	:	$(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+
+-include $(OBJS_DEPEND)
+
+
+clean	:	
+	rm -Rf build/
+
+
+fclean	:	clean
+	rm -f ${NAME}
+
+re		:	fclean ${NAME}
+
+.PHONY	:	all clean fclean re
