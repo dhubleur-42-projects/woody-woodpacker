@@ -1,6 +1,7 @@
 NAME		=	woody_woodpacker
 
-C_SRCS		= 	main.c
+C_SRCS		= 	main.c \
+				random.c
 
 ASM_SRCS	=	
 
