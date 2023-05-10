@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 13:56:36 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/10 14:13:27 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/10 14:19:54 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <fcntl.h>
 # include <unistd.h>
 # include <stdbool.h>
+# include <stdlib.h>
 
 void parse_file(char *name);
 
