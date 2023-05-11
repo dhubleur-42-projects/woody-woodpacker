@@ -2,7 +2,8 @@ NAME		=	woody_woodpacker
 
 C_SRCS		= 	main.c \
 				random.c \
-				elf_parser.c
+				elf_parser.c \
+				writter.c
 
 ASM_SRCS	=	
 
