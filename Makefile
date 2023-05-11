@@ -15,7 +15,7 @@ OBJS		=	$(addprefix build/, $(_OBJS))
 OBJS_DEPEND	=	${OBJS:.o=.d}
 
 CC			=	clang
-CFLAGS		=   -Wall -Wextra -Werror
+CFLAGS		=   -Wall -Wextra -Werror -g3
 INCLUDE		=	-I includes/
 
 ASMC		= nasm
