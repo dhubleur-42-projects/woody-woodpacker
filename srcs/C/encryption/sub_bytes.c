@@ -6,11 +6,12 @@
 /*   By: jmaia <jmaia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 13:09:19 by jmaia             #+#    #+#             */
-/*   Updated: 2023/05/10 13:25:05 by jmaia            ###   ###               */
+/*   Updated: 2023/05/11 16:01:57 by jmaia            ###   ###               */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdint.h>
+#include <stdlib.h>
 
 static const uint8_t S_BOX[] = {
 0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,     
@@ -39,6 +40,11 @@ uint8_t	get_sub_byte(uint8_t byte)
 // Subsitute every byte of bytes to its substitued byte got through S_BOX. It modifies given array.
 void	sub_bytes(uint8_t *bytes, size_t len)
 {
-	for (int i = 0; i < len; i++)
+	for (size_t i = 0; i < len; i++)
 		bytes[i] = get_sub_byte(bytes[i]);
+}
+
+void	sub_word(uint32_t *word)
+{
+	sub_bytes((uint8_t *) word, 4);
 }
