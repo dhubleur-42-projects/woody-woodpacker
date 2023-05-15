@@ -22,5 +22,6 @@ int		am_i_little_endian(void);
 void	up_shift(uint8_t *array, size_t width, size_t height, size_t i_column);
 void	n_up_shift(uint8_t *array, size_t width, size_t height, size_t i_column, size_t n_times);
 void	xor_bytes(uint8_t *a, uint8_t *b, size_t n_bytes);
+void	ft_memcpy(void *dest, void *src, size_t n_bytes);
 
 #endif
