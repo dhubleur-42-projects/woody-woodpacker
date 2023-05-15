@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:02:24 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/15 15:41:39 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/15 16:08:53 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void write_new_executable(Elf64_Ehdr header, Elf64_Phdr *program_header, Elf64_S
 		return ;
 	}
 
-	size_t payload_len = strlen(payload);
+	size_t payload_len = sizeof(payload) - 1;
 
 	if (ftruncate(output_fd, input_file_size + payload_len) == -1) {
 		perror("Cannot truncate file");
@@ -33,7 +33,7 @@ void write_new_executable(Elf64_Ehdr header, Elf64_Phdr *program_header, Elf64_S
 		return ;
 	}
 	
-	void *output_file_map = mmap(NULL, input_file_size + payload_len, PROT_WRITE, MAP_PRIVATE, output_fd, 0);
+	void *output_file_map = mmap(NULL, input_file_size + payload_len, PROT_WRITE, MAP_SHARED, output_fd, 0);
 	if (output_file_map == MAP_FAILED) {
 		perror("Cannot map output file");
 		close(output_fd);
@@ -47,11 +47,22 @@ void write_new_executable(Elf64_Ehdr header, Elf64_Phdr *program_header, Elf64_S
 	// Copy the input file to the output file
 	memcpy(output_file_map, input_file_map, input_file_size);
 
-	// Elf64_Ehdr *output_header = output_file_map;
-	// Elf64_Off entry_offset = output_header->e_entry;
-    // void *entry_point = output_file_map + entry_offset;
-    // memmove(entry_point + payload_len, entry_point, input_file_size - entry_offset);
-    // memcpy(entry_point, payload, payload_len);
+    Elf64_Ehdr *output_header = output_file_map;
+    Elf64_Phdr *output_program_header = output_file_map + output_header->e_phoff;
+    Elf64_Off text_offset = 0;
+    size_t text_size = 0;
+
+	// Find .text section (we assume it's the first PT_LOAD segment)
+    for (int i = 0; i < output_header->e_phnum; i++) {
+        if (output_program_header[i].p_type == PT_LOAD && output_program_header[i].p_flags == (PF_X|PF_R)) {
+            text_offset = output_program_header[i].p_offset;
+            text_size = output_program_header[i].p_memsz;
+            break;
+        }
+    }
+
+	// Copy the payload to the .text section
+    memcpy(output_file_map + text_offset, payload, payload_len);
 
 	munmap(output_file_map, input_file_size);
 	close(output_fd);
