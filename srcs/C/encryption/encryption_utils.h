@@ -4,12 +4,22 @@
 # include <stdint.h>
 # include <stdlib.h>
 
+void	cipher(uint8_t *message, size_t len, uint8_t *key, uint8_t *iv, uint8_t *encrypted);
+size_t	uncipher(uint8_t *encrypted, size_t len, uint8_t *key, uint8_t *iv, uint8_t *message);
+
 void	shift_rows(uint8_t *box);
 void	mix_columns(uint8_t *box);
 void	generate_keys(uint8_t *initial_key, uint8_t *subkeys);
 void	do_first_round(uint8_t *block, uint8_t *initial_key);
 void	do_last_round(uint8_t *block, uint8_t *key);
 void	do_regular_round(uint8_t *block, uint8_t *key);
+
+void	inv_shift_rows(uint8_t *box);
+void	inv_sub_bytes(uint8_t *bytes, size_t len);
+void	inv_mix_columns(uint8_t *box);
+void	reverse_first_round(uint8_t *block, uint8_t *initial_key);
+void	reverse_last_round(uint8_t *block, uint8_t *key);
+void	reverse_regular_round(uint8_t *block, uint8_t *key);
 
 void	sub_word(uint32_t *word);
 void	word_left_shift(uint32_t *word);

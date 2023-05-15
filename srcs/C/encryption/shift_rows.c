@@ -6,7 +6,7 @@
 /*   By: jmaia <jmaia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 13:45:04 by jmaia             #+#    #+#             */
-/*   Updated: 2023/05/12 18:33:04 by jmaia            ###   ###               */
+/*   Updated: 2023/05/15 15:54:39 by jmaia            ###   ###               */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,12 @@ void	shift_rows(uint8_t *box)
 {
 	for (int i = 1; i < 4; i++)
 		n_up_shift(box, 4, 4, i, i);
+}
+
+void	inv_shift_rows(uint8_t *box)
+{
+	for (int i = 1; i < 4; i++)
+		n_up_shift(box, 4, 4, i, 4 - i);
 }
 
 void	n_left_shift(uint8_t *array, size_t len, size_t n_times)

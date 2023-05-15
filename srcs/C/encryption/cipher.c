@@ -6,7 +6,7 @@
 /*   By: jmaia <jmaia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 13:34:17 by jmaia             #+#    #+#             */
-/*   Updated: 2023/05/15 15:21:39 by jmaia            ###   ###               */
+/*   Updated: 2023/05/15 17:06:56 by jmaia            ###   ###               */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	cipher(uint8_t *message, size_t len, uint8_t *key, uint8_t *iv, uint8_t *en
 	uint8_t	subkeys[240];
 
 	generate_keys(key, subkeys);
+
 	for (size_t i = 0; i < len / 16 + 1; i++)
 	{
 		uint8_t	*current_encrypted_block = encrypted + i * 16;
