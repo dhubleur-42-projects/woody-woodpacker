@@ -6,11 +6,12 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 13:56:27 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/10 14:45:35 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/11 14:36:58 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "elf_parser.h"
+#include "writter.h"
 
 bool parse_header(char *name, Elf64_Ehdr *header_ptr, int *fd);
 bool parse_sections_header(int fd, Elf64_Ehdr header, Elf64_Shdr **sections);
@@ -37,6 +38,26 @@ void parse_file(char *name) {
 		return ;
 	}
 
+	lseek(fd, 0, SEEK_SET);
+	off_t input_file_size = lseek(fd, 0, SEEK_END);
+    if (input_file_size == -1) {
+        perror("Cannot seek to end of file");
+		close(fd);
+		free(program_header);
+		free(sections_header);
+		return ;
+    }
+
+    void *input_file_map = mmap(NULL, input_file_size, PROT_READ, MAP_PRIVATE, fd, 0);
+    if (input_file_map == MAP_FAILED) {
+		perror("Cannot map file");
+		close(fd);
+		free(program_header);
+		free(sections_header);
+		return ;
+    }
+	write_new_executable(header, program_header, sections_header, input_file_map, input_file_size);
+	munmap(input_file_map, input_file_size);
 	close(fd);
 	free(program_header);
 	free(sections_header);

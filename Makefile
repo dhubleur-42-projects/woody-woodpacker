@@ -5,7 +5,9 @@ C_SRCS		= 	\
 				get_key.c \
 				main.c \
 				libft.c \
-				random.c
+				random.c \
+				elf_parser.c \
+				writter.c
 
 ASM_SRCS	=	
 
@@ -17,7 +19,7 @@ OBJS		=	$(addprefix build/, $(_OBJS))
 OBJS_DEPEND	=	${OBJS:.o=.d}
 
 CC			=	clang
-CFLAGS		=   -Wall -Wextra -Werror
+CFLAGS		=   -Wall -Wextra -Werror -g3
 INCLUDE		=	-I includes/
 
 ASMC		= nasm
