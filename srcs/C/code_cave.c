@@ -6,17 +6,17 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 14:54:29 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/16 20:42:53 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/16 23:39:18 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "injection.h"
 
-const char payload[] = "\x31\xc0\x31\xdb\x31\xd2\x68\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\xc6\x44\x24\x03\x0a\x68\x57\x4f\x4f\x44\x68\x2e\x2e\x2e\x2e\x89\xe1\xb2\x0c\xb0\x04\xb3\x01\xcd\x80\xb2\x0c\x01\xd4";
+char payload[] = "\x31\xc0\x31\xdb\x31\xd2\x68\x0a\x59\x44\x4F\x68\x4F\x57\x00\x00\x89\xe7\xb8\x04\x00\x00\x00\xbb\x01\x00\x00\x00\xb9\x06\x00\x00\x00\xcd\x80";
 
-char jmp[] = "\xe9\xff\xff\xff\xff";                      
-char pusha[] = "\x60";
-char popa[] = "\x61";
+char jmp[] = "\xe9\x00\x00\x00\x00";                      
+char pusha[] = "\x57\x56\x52";
+char popa[] = "\x5a\x5e\x5f";
 
 #define CODE_SIZE (sizeof(payload)-1 + sizeof(jmp)-1 + sizeof(pusha)-1 + sizeof(popa)-1)
 
@@ -66,8 +66,9 @@ void create_codecave(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr
 	printf("Old entry point: 0x%.8x\n", last_entry);
 	printf("New entry point: 0x%.8lx\n", header->e_entry);
 
-	int jmp_adr = (last_entry - (header->e_entry + CODE_SIZE));    
-	memcpy(jmp+1, &jmp_adr, sizeof(int));
+	int32_t jmp_adr = (int32_t)(last_entry - (header->e_entry + CODE_SIZE));
+	memcpy(jmp + 1, &jmp_adr, sizeof(int32_t));
+	printf("JMP address: 0x%.8x\n", jmp_adr);
 
 	insert_code(output_file_map + CODE_OFFSET);
 
