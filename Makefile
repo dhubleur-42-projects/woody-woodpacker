@@ -6,8 +6,8 @@ C_SRCS		= 	\
 				main.c \
 				libft.c \
 				random.c \
-				elf_parser.c \
-				writter.c
+				writter.c \
+				code_cave.c
 
 ASM_SRCS	=	
 

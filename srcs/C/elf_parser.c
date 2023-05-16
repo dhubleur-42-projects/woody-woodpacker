@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 13:56:27 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/11 14:36:58 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/16 15:45:52 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void parse_file(char *name) {
 		free(sections_header);
 		return ;
     }
-	write_new_executable(header, program_header, sections_header, input_file_map, input_file_size);
+	write_new_executable(input_file_map, input_file_size);
 	munmap(input_file_map, input_file_size);
 	close(fd);
 	free(program_header);
