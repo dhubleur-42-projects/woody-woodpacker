@@ -6,7 +6,7 @@
 /*   By: jmaia <jmaia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 16:00:32 by jmaia             #+#    #+#             */
-/*   Updated: 2023/05/15 17:14:15 by jmaia            ###   ###               */
+/*   Updated: 2023/05/16 15:42:23 by jmaia            ###   ###               */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,10 +136,12 @@ static uint8_t bit_multiply(uint8_t matrix_nbr, uint8_t vec_nbr)
 		case 1:
 			return vec_nbr;
 		case 2:
+		{
 			uint8_t ret = vec_nbr << 1;
 			if (vec_nbr & 0x80)
 				ret ^= 0x1b;
 			return ret;
+		}
 		case 3:
 			return bit_multiply(2, vec_nbr) ^ vec_nbr;
 		case 9:

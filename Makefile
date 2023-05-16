@@ -5,7 +5,17 @@ C_SRCS		= 	\
 				get_key.c \
 				main.c \
 				libft.c \
-				random.c
+				random.c \
+				encryption/cipher.c \
+				encryption/do_a_round.c \
+				encryption/ft_memcpy.c \
+				encryption/generate_keys.c \
+				encryption/mix_columns.c \
+				encryption/reverse_round.c \
+				encryption/shift_rows.c \
+				encryption/sub_bytes.c \
+				encryption/uncipher.c \
+				encryption/xor_bytes.c
 
 ASM_SRCS	=	
 
