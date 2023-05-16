@@ -6,46 +6,80 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 14:54:29 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/16 16:46:40 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/16 19:34:45 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "injection.h"
 
-void create_codecave(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr *program_headers, void *output_file_map, off_t output_file_size, char payload[], off_t payload_len) {
+const char payload[] = "\x31\xc0\x31\xdb\x31\xd2\x68\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\xc6\x44\x24\x03\x0a\x68\x57\x4f\x4f\x44\x68\x2e\x2e\x2e\x2e\x89\xe1\xb2\x0c\xb0\x04\xb3\x01\xcd\x80\xb2\x0c\x01\xd4";
+
+char jmp[] = "xe9xffxffxffxff";                      
+char pusha[] = "x60";
+char popa[] = "x61";
+
+#define CODE_SIZE (sizeof(payload)-1 + sizeof(jmp)-1 + sizeof(pusha)-1 + sizeof(popa)-1)
+
+#define CODE_OFFSET (program_headers->p_offset + program_headers->p_memsz)
+
+void insert_code(unsigned char *ptr)
+{
+    memcpy(ptr, pusha, sizeof(pusha)-1);
+    ptr += sizeof(pusha)-1;
+   
+    memcpy(ptr, payload, sizeof(payload)-1);
+    ptr += sizeof(payload)-1;
+   
+    memcpy(ptr, popa, sizeof(popa)-1);
+    ptr += sizeof(popa)-1;
+   
+    memcpy(ptr, jmp, sizeof(jmp)-1);
+}
+
+void create_codecave(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr *program_headers, void *output_file_map, off_t output_file_size) {
     (void)header;
 	(void)section_headers;
 	(void)program_headers;
 	(void)output_file_map;
 	(void)output_file_size;
-	(void)payload;
-	(void)payload_len;
 
-	void *payload_place = section_headers;
+	unsigned int last_entry = header->e_entry;
 
-	memmove(section_headers + payload_len, section_headers, header->e_shentsize * header->e_shnum);
-	section_headers += payload_len;
-	header->e_shoff += payload_len;
-	for (int i = 0; i < header->e_shnum; i++) {
-		section_headers[i].sh_offset += payload_len;
+	for(int i = 0; i < header->e_phnum - 1; i++)
+    {
+        if(program_headers->p_type == PT_LOAD)
+            break;
+        program_headers++;
+    }
+
+	Elf64_Phdr *next_header = program_headers + 1;
+
+	if(next_header->p_type != PT_LOAD || program_headers->p_type != PT_LOAD) {
+		printf("Error: PT_LOAD not found\n");
+		return;
 	}
 
-	void *new_section_place = output_file_map + output_file_size - header->e_shentsize;
+	if(program_headers->p_memsz != program_headers->p_filesz || (CODE_OFFSET + CODE_SIZE) > (next_header->p_offset + program_headers->p_offset)) {
+		printf("Error: not enough space\n");
+		return;
+	}
 
-	Elf64_Shdr *new_section = new_section_place;
-	new_section->sh_name = 0;
-	new_section->sh_type = SHT_PROGBITS;
-	new_section->sh_flags = SHF_ALLOC | SHF_EXECINSTR;
-	new_section->sh_addr = 0;
-	new_section->sh_offset = new_section_place - output_file_map;
-	new_section->sh_size = payload_len;
-	new_section->sh_link = 0;
-	new_section->sh_info = 0;
-	new_section->sh_addralign = 16;
-	new_section->sh_entsize = 0;
-	header->e_shnum++;
+	printf("Found two PT_LOAD\n");
+	printf("First PT_LOAD: Start: 0x%.8lx, End: 0x%.8lx\n", program_headers->p_offset, program_headers->p_offset + program_headers->p_memsz);
+	printf("Second PT_LOAD: Start: 0x%.8lx, End: 0x%.8lx\n", next_header->p_offset, next_header->p_offset + next_header->p_memsz);
+	printf("Between them, there is %lu bytes (for a payload of %lu bytes)\n", next_header->p_offset - (program_headers->p_offset + program_headers->p_memsz), CODE_SIZE);
 
-	memcpy(payload_place, payload, payload_len);
+	header->e_entry = program_headers->p_vaddr + program_headers->p_memsz;
+	printf("Old entry point: 0x%.8x\n", last_entry);
+	printf("New entry point: 0x%.8lx\n", header->e_entry);
 
-	header->e_entry = payload_place - output_file_map;	
+	int jmp_adr = (last_entry - (header->e_entry + CODE_SIZE));    
+	memcpy(jmp+1, &jmp_adr, sizeof(int));
+
+	insert_code(output_file_map + CODE_OFFSET);
+
+	program_headers->p_memsz += CODE_SIZE;
+    program_headers->p_filesz += CODE_SIZE;    
+
+	printf("New PT_LOAD: Start: 0x%.8lx, End: 0x%.8lx\n", program_headers->p_offset, program_headers->p_offset + program_headers->p_memsz);
 }
