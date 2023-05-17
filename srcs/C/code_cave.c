@@ -6,19 +6,40 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 14:54:29 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/17 12:46:26 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/17 13:24:00 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "injection.h"
 
+/*
+bits 64
+default rel
+global _start
+
+_start:
+        xor     eax, eax
+        cdq
+        mov     dl, 10
+        inc     eax
+        mov     edi, eax
+        lea     rsi, [rel msg]
+        syscall
+
+msg     db "..WOODY..",10
+*/
 char payload[] = "\x31\xc0\x99\xb2\x0a\xff\xc0\x89"
                    "\xc7\x48\x8d\x35\x02\x00\x00\x00"
                    "\x0f\x05\x2e\x2e\x57\x4f\x4f\x44"
                    "\x59\x2e\x2e\x0a";
 
-char jmp[] = "\xe9\x00\x00\x00\x00";                      
+// jmp 0x00000000
+char jmp[] = "\xe9\x00\x00\x00\x00";  
+
+// push rax; push rdi; push rsi
 char pusha[] = "\x50\x57\x56";
+
+// pop rsi; pop rdi; pop rax
 char popa[] = "\x5e\x5f\x58";
 
 #define CODE_SIZE (sizeof(payload)-1 + sizeof(jmp)-1 + sizeof(pusha)-1 + sizeof(popa)-1)
