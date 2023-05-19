@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 14:54:29 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/19 15:07:47 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/19 18:29:02 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,23 +37,23 @@ char payload[] = "\x31\xc0\x99\xb2\x0a\xff\xc0\x89"
 char jmp[] = "\xe9\x00\x00\x00\x00";  
 
 // push rax; push rdi; push rsi
-char pusha[] = "\x50\x57\x56";
+char save_registers[] = "\x50\x57\x56";
 
 // pop rsi; pop rdi; pop rax
-char popa[] = "\x5e\x5f\x58";
+char load_registers[] = "\x5e\x5f\x58";
 
-#define PAYLOAD_LENGTH (sizeof(payload)-1 + sizeof(jmp)-1 + sizeof(pusha)-1 + sizeof(popa)-1)
+#define PAYLOAD_LENGTH (sizeof(payload)-1 + sizeof(jmp)-1 + sizeof(save_registers)-1 + sizeof(load_registers)-1)
 
 void insert_code(unsigned char *ptr)
 {
-    memcpy(ptr, pusha, sizeof(pusha)-1);
-    ptr += sizeof(pusha)-1;
+    memcpy(ptr, save_registers, sizeof(save_registers)-1);
+    ptr += sizeof(save_registers)-1;
    
     memcpy(ptr, payload, sizeof(payload)-1);
     ptr += sizeof(payload)-1;
    
-    memcpy(ptr, popa, sizeof(popa)-1);
-    ptr += sizeof(popa)-1;
+    memcpy(ptr, load_registers, sizeof(load_registers)-1);
+    ptr += sizeof(load_registers)-1;
 
     memcpy(ptr, jmp, sizeof(jmp)-1);
 }
