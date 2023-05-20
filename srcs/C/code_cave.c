@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 14:54:29 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/19 18:29:02 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/20 11:41:27 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@ default rel
 global _start
 
 _start:
+		push rax
+		push rdi
+		push rsi
+		push rdx
         xor     eax, eax
         cdq
         mov     dl, 10
@@ -25,37 +29,46 @@ _start:
         mov     edi, eax
         lea     rsi, [rel msg]
         syscall
+		pop rdx
+		pop rsi
+		pop rdi
+		pop rax
+		jmp 0x42424242
 
 msg     db "..WOODY..",10
 */
-char payload[] = "\x31\xc0\x99\xb2\x0a\xff\xc0\x89"
-                   "\xc7\x48\x8d\x35\x02\x00\x00\x00"
-                   "\x0f\x05\x2e\x2e\x57\x4f\x4f\x44"
-                   "\x59\x2e\x2e\x0a";
+
+char payload_part_1[] = "\x31\xc0\x99\xb2\x0a\xff\xc0\x89\xc7\x48\x8d\x35\x0b\x00\x00\x00\x0f\x05";
+char payload_part_2[] = "\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\x0a";
 
 // jmp 0x00000000 (to be replaced)
 char jmp[] = "\xe9\x00\x00\x00\x00";  
 
-// push rax; push rdi; push rsi
-char save_registers[] = "\x50\x57\x56";
+// push rax; push rdi; push rsi; push rdx
+char save_registers[] = "\x50\x57\x56\x52";
 
-// pop rsi; pop rdi; pop rax
-char load_registers[] = "\x5e\x5f\x58";
+// pop rdx; pop rsi; pop rdi; pop rax
+char load_registers[] = "\x5a\x5e\x5f\x58";
 
-#define PAYLOAD_LENGTH (sizeof(payload)-1 + sizeof(jmp)-1 + sizeof(save_registers)-1 + sizeof(load_registers)-1)
+#define PAYLOAD_LENGTH (sizeof(payload_part_1)-1 + sizeof(payload_part_2)-1 + sizeof(jmp)-1 + sizeof(save_registers)-1 + sizeof(load_registers)-1)
+#define PAYLOAD_TO_JMP_LENGTH (sizeof(payload_part_1)-1 + sizeof(save_registers)-1 + sizeof(load_registers)-1 + sizeof(jmp)-1)
 
 void insert_code(unsigned char *ptr)
-{
+{	
     memcpy(ptr, save_registers, sizeof(save_registers)-1);
     ptr += sizeof(save_registers)-1;
    
-    memcpy(ptr, payload, sizeof(payload)-1);
-    ptr += sizeof(payload)-1;
+    memcpy(ptr, payload_part_1, sizeof(payload_part_1)-1);
+    ptr += sizeof(payload_part_1)-1;
    
     memcpy(ptr, load_registers, sizeof(load_registers)-1);
     ptr += sizeof(load_registers)-1;
 
     memcpy(ptr, jmp, sizeof(jmp)-1);
+	ptr += sizeof(jmp)-1;
+
+	memcpy(ptr, payload_part_2, sizeof(payload_part_2)-1);
+    ptr += sizeof(payload_part_2)-1;
 }
 
 void create_codecave(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr *program_headers, void *output_file_map, off_t output_file_size) {
@@ -90,7 +103,7 @@ void create_codecave(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr
 	printf("Old entry point: 0x%.8x\n", last_entry);
 	printf("New entry point: 0x%.8lx\n", header->e_entry);
 
-	int32_t jmp_adr = (int32_t)(last_entry - (header->e_entry + PAYLOAD_LENGTH));
+	int32_t jmp_adr = (int32_t)(last_entry - (header->e_entry + PAYLOAD_TO_JMP_LENGTH));
 	memcpy(jmp + 1, &jmp_adr, sizeof(int32_t));
 	printf("JMP address: 0x%.8x\n", jmp_adr);
 
