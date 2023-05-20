@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 14:54:29 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/20 11:41:27 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/20 22:19:56 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,4 +113,52 @@ void create_codecave(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr
     selected_header->p_filesz += PAYLOAD_LENGTH;
 
 	printf("New PT_LOAD: Start: 0x%.8lx, End: 0x%.8lx\n", selected_header->p_offset, selected_header->p_offset + selected_header->p_memsz);
+}
+
+Elf64_Phdr *find_code_cave(Elf64_Ehdr *header Elf64_Phdr *program_headers, size_t payload_size) {
+	for (int i = 0; i < header->e_phnum - 1; i++) {
+		if (program_headers[i].p_type != PT_LOAD)
+			continue;
+		if (!(program_headers[i].p_flags & PF_X))
+			continue;
+		if (program_headers[i + 1].p_type != PT_LOAD)
+			continue;
+		size_t available_space = program_headers[i + 1].p_offset - (program_headers[i].p_offset + program_headers[i].p_memsz);
+		if (available_space < payload_size)
+			continue;
+		printf("Found code cave of %lu bytes (for a payload of %lu bytes) between PT_LOAD %i and %i\n", available_space, payload_size, i, i + 1);
+		return &program_headers[i];
+	}
+	printf("Impossible to found a code cave\n");
+	return NULL;
+}
+
+Elf64_Phdr *create_segment(Elf64_Ehdr *header Elf64_Phdr *program_headers, size_t payload_size) {
+	bool found = false;
+	int i = 0;
+	for(; i < header->e_phnum; i++)
+	{
+		if (program_headers[i].p_type != PT_LOAD)
+			continue;
+		if (i == header->e_phnum - 1)
+		{
+			found = true;
+			break;
+		}
+		if (program_headers[i + 1].p_type != PT_LOAD)
+		{
+			found = true;
+			break;
+		}
+	}
+	if (!found)
+	{
+		printf("Impossible to find the last PT_LOAD segment\n");
+		return NULL;
+	}
+	printf("Found the last PT_LOAD segment at index %i (from 0x%.8lx to 0x%.8lx)\n", i, program_headers[i].p_offset, program_headers[i].p_offset + program_headers[i].p_memsz);
+	realloc(program_headers, sizeof(Elf64_Phdr) * (header->e_phnum + 1));
+	Elf64_Phdr *new_segment = &program_headers[i + 1];
+	new_segment->p_type = PT_LOAD;
+	new_segment->p_flags = PF_R | PF_X;
 }

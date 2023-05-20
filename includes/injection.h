@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 14:54:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/16 18:55:22 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/20 22:14:53 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <string.h>
 # include <stdlib.h>
 # include <stdio.h>
+# inclusde <stdbool.h>
 
 void create_codecave(Elf64_Ehdr *header, Elf64_Shdr *sections, Elf64_Phdr *program_header, void *output_file_map, off_t output_file_size);
 
