@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 14:54:29 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/20 22:19:56 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/21 13:49:11 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void create_codecave(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr
 	printf("New PT_LOAD: Start: 0x%.8lx, End: 0x%.8lx\n", selected_header->p_offset, selected_header->p_offset + selected_header->p_memsz);
 }
 
-Elf64_Phdr *find_code_cave(Elf64_Ehdr *header Elf64_Phdr *program_headers, size_t payload_size) {
+Elf64_Phdr *find_code_cave(Elf64_Ehdr *header, Elf64_Phdr *program_headers, size_t payload_size) {
 	for (int i = 0; i < header->e_phnum - 1; i++) {
 		if (program_headers[i].p_type != PT_LOAD)
 			continue;
@@ -133,7 +133,7 @@ Elf64_Phdr *find_code_cave(Elf64_Ehdr *header Elf64_Phdr *program_headers, size_
 	return NULL;
 }
 
-Elf64_Phdr *create_segment(Elf64_Ehdr *header Elf64_Phdr *program_headers, size_t payload_size) {
+Elf64_Phdr *create_segment(Elf64_Ehdr *header, Elf64_Phdr *program_headers, size_t payload_size) {
 	bool found = false;
 	int i = 0;
 	for(; i < header->e_phnum; i++)
@@ -157,8 +157,20 @@ Elf64_Phdr *create_segment(Elf64_Ehdr *header Elf64_Phdr *program_headers, size_
 		return NULL;
 	}
 	printf("Found the last PT_LOAD segment at index %i (from 0x%.8lx to 0x%.8lx)\n", i, program_headers[i].p_offset, program_headers[i].p_offset + program_headers[i].p_memsz);
-	realloc(program_headers, sizeof(Elf64_Phdr) * (header->e_phnum + 1));
+	size_t space_align_segment = program_headers[i].p_align - (program_headers[i].p_offset + program_headers[i].p_memsz) % program_headers[i].p_align;
+	printf("Space to align segment: %lu (aligment page: %lu)\n", space_align_segment, program_headers[i].p_align);
+	program_headers = realloc(program_headers, sizeof(Elf64_Phdr) * (header->e_phnum + 1));
+	for (int j = header->e_phnum - 1; j > i; j--)
+		program_headers[j + 1] = program_headers[j];
 	Elf64_Phdr *new_segment = &program_headers[i + 1];
 	new_segment->p_type = PT_LOAD;
 	new_segment->p_flags = PF_R | PF_X;
+	new_segment->p_offset = program_headers[i].p_offset + program_headers[i].p_memsz + space_align_segment;
+	new_segment->p_vaddr = program_headers[i].p_vaddr + program_headers[i].p_memsz + space_align_segment;
+	new_segment->p_paddr = program_headers[i].p_paddr + program_headers[i].p_memsz + space_align_segment;
+	new_segment->p_filesz = payload_size;
+	new_segment->p_memsz = payload_size;
+	new_segment->p_align = program_headers[i].p_align;
+	printf("New segment created at index %i (from 0x%.8lx to 0x%.8lx)\n", i + 1, new_segment->p_offset, new_segment->p_offset + new_segment->p_memsz);
+	return new_segment;
 }
