@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 14:54:29 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/21 13:49:11 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/22 12:03:21 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,46 +131,4 @@ Elf64_Phdr *find_code_cave(Elf64_Ehdr *header, Elf64_Phdr *program_headers, size
 	}
 	printf("Impossible to found a code cave\n");
 	return NULL;
-}
-
-Elf64_Phdr *create_segment(Elf64_Ehdr *header, Elf64_Phdr *program_headers, size_t payload_size) {
-	bool found = false;
-	int i = 0;
-	for(; i < header->e_phnum; i++)
-	{
-		if (program_headers[i].p_type != PT_LOAD)
-			continue;
-		if (i == header->e_phnum - 1)
-		{
-			found = true;
-			break;
-		}
-		if (program_headers[i + 1].p_type != PT_LOAD)
-		{
-			found = true;
-			break;
-		}
-	}
-	if (!found)
-	{
-		printf("Impossible to find the last PT_LOAD segment\n");
-		return NULL;
-	}
-	printf("Found the last PT_LOAD segment at index %i (from 0x%.8lx to 0x%.8lx)\n", i, program_headers[i].p_offset, program_headers[i].p_offset + program_headers[i].p_memsz);
-	size_t space_align_segment = program_headers[i].p_align - (program_headers[i].p_offset + program_headers[i].p_memsz) % program_headers[i].p_align;
-	printf("Space to align segment: %lu (aligment page: %lu)\n", space_align_segment, program_headers[i].p_align);
-	program_headers = realloc(program_headers, sizeof(Elf64_Phdr) * (header->e_phnum + 1));
-	for (int j = header->e_phnum - 1; j > i; j--)
-		program_headers[j + 1] = program_headers[j];
-	Elf64_Phdr *new_segment = &program_headers[i + 1];
-	new_segment->p_type = PT_LOAD;
-	new_segment->p_flags = PF_R | PF_X;
-	new_segment->p_offset = program_headers[i].p_offset + program_headers[i].p_memsz + space_align_segment;
-	new_segment->p_vaddr = program_headers[i].p_vaddr + program_headers[i].p_memsz + space_align_segment;
-	new_segment->p_paddr = program_headers[i].p_paddr + program_headers[i].p_memsz + space_align_segment;
-	new_segment->p_filesz = payload_size;
-	new_segment->p_memsz = payload_size;
-	new_segment->p_align = program_headers[i].p_align;
-	printf("New segment created at index %i (from 0x%.8lx to 0x%.8lx)\n", i + 1, new_segment->p_offset, new_segment->p_offset + new_segment->p_memsz);
-	return new_segment;
 }
