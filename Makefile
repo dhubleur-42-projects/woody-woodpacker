@@ -1,13 +1,14 @@
 NAME		=	woody_woodpacker
 
 C_SRCS		= 	\
-				elf_parser.c \
 				get_key.c \
 				main.c \
 				libft.c \
 				random.c \
-				elf_parser.c \
-				writter.c
+				$(addprefix injection/, \
+					inject.c \
+					code_cave.c \
+					elf_parser.c)
 
 ASM_SRCS	=	
 
