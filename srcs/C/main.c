@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 15:02:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/16 15:28:06 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/22 13:34:04 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,6 @@ int	main(int ac, char **av) {
 	// 	return (1);
 	// }
 	// get_key(key, ac, av);
-	parse_file(av[1]);
+	start_injection(av[1]);
 	return (0);
 }

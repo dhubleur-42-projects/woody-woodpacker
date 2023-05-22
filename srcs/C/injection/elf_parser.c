@@ -6,21 +6,20 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 13:56:27 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/16 15:45:52 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/22 13:33:36 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "elf_parser.h"
-#include "writter.h"
+#include "injection.h"
 
 bool parse_header(char *name, Elf64_Ehdr *header_ptr, int *fd);
 bool parse_sections_header(int fd, Elf64_Ehdr header, Elf64_Shdr **sections);
 bool parse_programs_header(int fd, Elf64_Ehdr header, Elf64_Phdr **program);
 
-void parse_file(char *name) {
+void start_injection(char *input_name) {
 	int fd;
 	Elf64_Ehdr header;
-	if (!parse_header(name, &header, &fd))
+	if (!parse_header(input_name, &header, &fd))
 		return ;
 
 	Elf64_Phdr *program_header;
@@ -56,7 +55,7 @@ void parse_file(char *name) {
 		free(sections_header);
 		return ;
     }
-	write_new_executable(input_file_map, input_file_size);
+	inject(&header, program_header, sections_header, input_file_map, input_file_size);
 	munmap(input_file_map, input_file_size);
 	close(fd);
 	free(program_header);

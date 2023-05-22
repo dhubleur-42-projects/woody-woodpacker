@@ -6,9 +6,9 @@ C_SRCS		= 	\
 				libft.c \
 				random.c \
 				$(addprefix injection/, \
+					inject.c \
 					code_cave.c \
-					elf_parser.c \
-					writter.c)
+					elf_parser.c)
 
 ASM_SRCS	=	
 

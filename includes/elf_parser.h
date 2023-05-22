@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 13:56:36 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/10 14:19:54 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/22 13:33:59 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,6 @@
 # include <stdbool.h>
 # include <stdlib.h>
 
-void parse_file(char *name);
+void start_injection(char *input_name);
 
 #endif
