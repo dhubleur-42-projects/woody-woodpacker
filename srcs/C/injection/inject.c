@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/22 13:46:07 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/05/22 13:51:00 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,9 @@ void insert_payload(unsigned char *ptr, unsigned int last_entry, unsigned int cu
     memcpy(ptr, payload, sizeof(payload)-1);
     ptr += sizeof(payload)-1;
 
+	printf("Old entry point: 0x%.8x\n", last_entry);
 	int32_t jmp_adr = (int32_t)(last_entry - (current_entry + sizeof(payload)-1 + sizeof(jmp)-1));
+	printf("Computed jump: %d\n", jmp_adr);
 	memcpy(jmp + 1, &jmp_adr, sizeof(int32_t));
     memcpy(ptr, jmp, sizeof(jmp)-1);
 	ptr += sizeof(jmp)-1;
@@ -65,7 +67,8 @@ void make_injection(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr 
 		printf("Code cave segment: start: 0x%.8lx, end: 0x%.8lx\n", code_cave->p_offset, code_cave->p_offset + code_cave->p_memsz);
 		unsigned int last_entry = header->e_entry;
 		size_t injection_offset = use_code_cave(header, code_cave, PAYLOAD_LENGTH);
-		printf("Code cave header modified, new end: 0x%.8lx, new entry point: 0x%.8lx\n", code_cave->p_offset + code_cave->p_memsz, header->e_entry);
+		printf("Code cave header modified, new end: 0x%.8lx\n", code_cave->p_offset + code_cave->p_memsz);
+		printf("New entry point: 0x%.8lx\n", header->e_entry);
 		insert_payload(file_map + injection_offset, last_entry, header->e_entry);
 		printf("Payload injected\n");
 	} else {
