@@ -1,35 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   reverse_round.c                                    :+:      :+:    :+:   */
+/*   add_padding.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jmaia <jmaia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/15 15:51:57 by jmaia             #+#    #+#             */
-/*   Updated: 2023/05/15 17:09:05 by jmaia            ###   ###               */
+/*   Created: 2023/05/16 20:09:15 by jmaia             #+#    #+#             */
+/*   Updated: 2023/05/16 20:09:28 by jmaia            ###   ###               */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdint.h>
-
 #include "encryption_utils.h"
 
-void	reverse_first_round(uint8_t *block, uint8_t *initial_key)
+void add_padding(uint8_t *block, size_t block_len)
 {
-	xor_bytes(block, initial_key, 16);
-}
+	size_t	len_pad = 16 - block_len;
 
-void	reverse_last_round(uint8_t *block, uint8_t *key)
-{
-	xor_bytes(block, key, 16);
-	inv_shift_rows(block);
-	inv_sub_bytes(block, 16);
-}
-
-void	reverse_regular_round(uint8_t *block, uint8_t *key)
-{
-	xor_bytes(block, key, 16);
-	inv_mix_columns(block);
-	inv_shift_rows(block);
-	inv_sub_bytes(block, 16);
+	for (size_t i = block_len; i < 16; i++)
+		block[i] = len_pad;
 }

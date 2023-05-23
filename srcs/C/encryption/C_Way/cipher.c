@@ -6,7 +6,7 @@
 /*   By: jmaia <jmaia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 13:34:17 by jmaia             #+#    #+#             */
-/*   Updated: 2023/05/15 17:06:56 by jmaia            ###   ###               */
+/*   Updated: 2023/05/16 20:10:27 by jmaia            ###   ###               */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include "encryption_utils.h"
 
 static void	cipher_block(uint8_t *block, uint8_t *subkeys);
-static void add_padding(uint8_t *block, size_t block_len);
 
 // We assume key is 32 bytes long and iv is 16 bytes long
 void	cipher(uint8_t *message, size_t len, uint8_t *key, uint8_t *iv, uint8_t *encrypted)
@@ -49,12 +48,4 @@ static void	cipher_block(uint8_t *block, uint8_t *subkeys)
 	for (int i = 0; i < 13; i++)
 		do_regular_round(block, subkeys + (i + 1) * 16);
 	do_last_round(block, subkeys + 14 * 16);
-}
-
-static void add_padding(uint8_t *block, size_t block_len)
-{
-	size_t	len_pad = 16 - block_len;
-
-	for (size_t i = block_len; i < 16; i++)
-		block[i] = len_pad;
 }

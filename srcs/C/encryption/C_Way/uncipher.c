@@ -6,7 +6,7 @@
 /*   By: jmaia <jmaia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 15:58:32 by jmaia             #+#    #+#             */
-/*   Updated: 2023/05/15 17:07:34 by jmaia            ###   ###               */
+/*   Updated: 2023/05/19 17:37:02 by jmaia            ###   ###               */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,13 @@
 
 #include "encryption_utils.h"
 
-#include <stdio.h> // TODO
-
 static void	uncipher_block(uint8_t *block, uint8_t *subkeys);
 
 // Return length of message
 size_t	uncipher(uint8_t *encrypted, size_t len, uint8_t *key, uint8_t *iv, uint8_t *message)
 {
 	uint8_t	subkeys[240];
-	size_t	len_message = len - encrypted[len - 1];
+	size_t	len_message;
 
 	generate_keys(key, subkeys);
 	for (size_t i = len / 16 - 1; i != (size_t) -1; i--)
@@ -34,7 +32,7 @@ size_t	uncipher(uint8_t *encrypted, size_t len, uint8_t *key, uint8_t *iv, uint8
 		uncipher_block(current_encrypted_block, subkeys);
 		xor_bytes(current_encrypted_block, current_vec, 16);
 		len_message = len - encrypted[len - 1];
-		if (i != len / 16)
+		if (i != len / 16 - 1)
 			ft_memcpy(current_message_block, current_encrypted_block, 16);
 		else
 			ft_memcpy(current_message_block, current_encrypted_block, len_message % 16);

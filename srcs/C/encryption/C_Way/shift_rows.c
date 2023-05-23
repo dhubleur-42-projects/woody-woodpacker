@@ -6,7 +6,7 @@
 /*   By: jmaia <jmaia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 13:45:04 by jmaia             #+#    #+#             */
-/*   Updated: 2023/05/15 15:54:39 by jmaia            ###   ###               */
+/*   Updated: 2023/05/23 11:37:16 by jmaia            ###   ###               */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ void	up_shift(uint8_t *array, size_t width, size_t height, size_t i_column)
 	array[(height - 1) * width + i_column] = old_first_value;
 }
 
-// TODO: Make it endian independant ?
 void word_left_shift(uint32_t *word)
 {
 	if (am_i_little_endian())
