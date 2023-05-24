@@ -6,18 +6,19 @@
 /*   By: jmaia <jmaia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 13:34:17 by jmaia             #+#    #+#             */
-/*   Updated: 2023/05/16 20:10:27 by jmaia            ###   ###               */
+/*   Updated: 2023/05/23 12:12:18 by jmaia            ###   ###               */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdint.h>
 
 #include "encryption_utils.h"
+#include "libft.h"
 
 static void	cipher_block(uint8_t *block, uint8_t *subkeys);
 
 // We assume key is 32 bytes long and iv is 16 bytes long
-void	cipher(uint8_t *message, size_t len, uint8_t *key, uint8_t *iv, uint8_t *encrypted)
+size_t	c_cipher(uint8_t *message, size_t len, uint8_t *key, uint8_t *iv, uint8_t *encrypted)
 {
 	uint8_t	subkeys[240];
 
@@ -40,6 +41,7 @@ void	cipher(uint8_t *message, size_t len, uint8_t *key, uint8_t *iv, uint8_t *en
 		xor_bytes(current_encrypted_block, current_vec, 16);
 		cipher_block(current_encrypted_block, subkeys);
 	}
+	return ((len / 16 + 1) * 16);
 }
 
 static void	cipher_block(uint8_t *block, uint8_t *subkeys)

@@ -6,18 +6,19 @@
 /*   By: jmaia <jmaia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 15:58:32 by jmaia             #+#    #+#             */
-/*   Updated: 2023/05/19 17:37:02 by jmaia            ###   ###               */
+/*   Updated: 2023/05/24 12:27:25 by jmaia            ###   ###               */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdint.h>
 
 #include "encryption_utils.h"
+#include "libft.h"
 
 static void	uncipher_block(uint8_t *block, uint8_t *subkeys);
 
 // Return length of message
-size_t	uncipher(uint8_t *encrypted, size_t len, uint8_t *key, uint8_t *iv, uint8_t *message)
+size_t	c_uncipher(uint8_t *encrypted, size_t len, uint8_t *key, uint8_t *iv, uint8_t *message)
 {
 	uint8_t	subkeys[240];
 	size_t	len_message;

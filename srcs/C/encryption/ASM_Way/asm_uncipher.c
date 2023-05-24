@@ -6,7 +6,7 @@
 /*   By: jmaia <jmaia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 18:47:36 by jmaia             #+#    #+#             */
-/*   Updated: 2023/05/23 11:36:05 by jmaia            ###   ###               */
+/*   Updated: 2023/05/24 12:27:00 by jmaia            ###   ###               */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,12 @@
 
 #include "encryption_utils.h"
 
-size_t aes_cbc_decrypt(uint8_t *encrypted, size_t len, uint8_t *key, uint8_t *iv, uint8_t *message)
+#include "libft.h"
+
+size_t asm_uncipher(uint8_t *encrypted, size_t len, uint8_t *key, uint8_t *iv, uint8_t *message)
 {
 	__m128i data, feedback, last_in;
-	int i, j;
-	int	n_block;
+	size_t i, j;
 	uint8_t subkeys[240];
 	uint8_t	block[16];
 	size_t	len_message;
@@ -40,9 +41,11 @@ size_t aes_cbc_decrypt(uint8_t *encrypted, size_t len, uint8_t *key, uint8_t *iv
 		{
 			_mm_storeu_si128((__m128i_u *)&block, data);
 			ft_memcpy(message + i * 16, block, 16 - block[15]);
+			len_message = len - block[15];
 		}
 		else
 			_mm_storeu_si128(&((__m128i*) message)[i], data);
 		feedback = last_in;
 	}
+	return (len_message);
 }

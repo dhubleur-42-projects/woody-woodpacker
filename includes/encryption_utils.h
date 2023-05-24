@@ -4,8 +4,16 @@
 # include <stdint.h>
 # include <stdlib.h>
 
-void	cipher(uint8_t *message, size_t len, uint8_t *key, uint8_t *iv, uint8_t *encrypted);
+int		check_cpu_support_aes();
+
+size_t	cipher(uint8_t *message, size_t len, uint8_t *key, uint8_t *iv, uint8_t *encrypted);
 size_t	uncipher(uint8_t *encrypted, size_t len, uint8_t *key, uint8_t *iv, uint8_t *message);
+
+size_t	asm_cipher(uint8_t *message, size_t len, uint8_t *key, uint8_t *iv, uint8_t *encrypted);
+size_t	asm_uncipher(uint8_t *encrypted, size_t len, uint8_t *key, uint8_t *iv, uint8_t *message);
+
+size_t	c_cipher(uint8_t *message, size_t len, uint8_t *key, uint8_t *iv, uint8_t *encrypted);
+size_t	c_uncipher(uint8_t *encrypted, size_t len, uint8_t *key, uint8_t *iv, uint8_t *message);
 
 void	shift_rows(uint8_t *box);
 void	mix_columns(uint8_t *box);

@@ -6,9 +6,11 @@
 /*   By: jmaia <jmaia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 18:21:11 by jmaia             #+#    #+#             */
-/*   Updated: 2023/05/16 18:24:40 by jmaia            ###   ###               */
+/*   Updated: 2023/05/23 11:46:09 by jmaia            ###   ###               */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "encryption_utils.h"
 
 #define cpuid(func,ax,bx,cx,dx)\
 	__asm__ __volatile__ ("cpuid":\

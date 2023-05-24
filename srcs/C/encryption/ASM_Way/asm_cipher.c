@@ -6,7 +6,7 @@
 /*   By: jmaia <jmaia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 18:34:04 by jmaia             #+#    #+#             */
-/*   Updated: 2023/05/23 11:36:57 by jmaia            ###   ###               */
+/*   Updated: 2023/05/23 12:11:30 by jmaia            ###   ###               */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include "libft.h"
 #include <strings.h>
 
-void aes_cbc_encrypt(uint8_t *message, size_t len, uint8_t *key, uint8_t *iv, uint8_t *encrypted)
+size_t asm_cipher(uint8_t *message, size_t len, uint8_t *key, uint8_t *iv, uint8_t *encrypted)
 {
 	__m128i feedback, data;
 	int i, j;
@@ -45,4 +45,5 @@ void aes_cbc_encrypt(uint8_t *message, size_t len, uint8_t *key, uint8_t *iv, ui
 		feedback = _mm_aesenclast_si128(feedback, ((__m128i*) subkeys)[j]);
 		_mm_storeu_si128(&((__m128i*) encrypted)[i], feedback);
 	}
+	return (n_block * 16);
 }
