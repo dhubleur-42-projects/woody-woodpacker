@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/22 13:51:00 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/06/21 14:05:22 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,28 +61,39 @@ void insert_payload(unsigned char *ptr, unsigned int last_entry, unsigned int cu
 }
 
 void make_injection(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr *segment_headers, void *file_map) {
-	(void)section_headers;
-	Elf64_Phdr *code_cave = find_code_cave(header, segment_headers, PAYLOAD_LENGTH);
-	if (code_cave) {
-		printf("Code cave segment: start: 0x%.8lx, end: 0x%.8lx\n", code_cave->p_offset, code_cave->p_offset + code_cave->p_memsz);
+	// Elf64_Phdr *code_cave = find_code_cave(header, segment_headers, PAYLOAD_LENGTH);
+	// if (code_cave) {
+	// 	printf("Code cave segment: start: 0x%.8lx, end: 0x%.8lx\n", code_cave->p_offset, code_cave->p_offset + code_cave->p_memsz);
+	// 	unsigned int last_entry = header->e_entry;
+	// 	size_t injection_offset = use_code_cave(header, code_cave, PAYLOAD_LENGTH);
+	// 	printf("Code cave header modified, new end: 0x%.8lx\n", code_cave->p_offset + code_cave->p_memsz);
+	// 	printf("New entry point: 0x%.8lx\n", header->e_entry);
+	// 	insert_payload(file_map + injection_offset, last_entry, header->e_entry);
+	// 	printf("Payload injected\n");
+	// } else {
+		Elf64_Phdr *segment = get_segment_to_extend(header, segment_headers);
+		size_t injection_offset = segment->p_offset + segment->p_memsz;
+		printf("No code cave found, extending segment: start: 0x%.8lx, end: 0x%.8lx\n", segment->p_offset, segment->p_offset + segment->p_memsz);
 		unsigned int last_entry = header->e_entry;
-		size_t injection_offset = use_code_cave(header, code_cave, PAYLOAD_LENGTH);
-		printf("Code cave header modified, new end: 0x%.8lx\n", code_cave->p_offset + code_cave->p_memsz);
+		extend_and_shift(PAYLOAD_LENGTH, header, segment_headers, section_headers, segment);
 		printf("New entry point: 0x%.8lx\n", header->e_entry);
+		printf("Segment extended, new end: 0x%.8lx\n", segment->p_offset + segment->p_memsz);
+		printf("Start injection at 0x%.8lx\n", injection_offset);
 		insert_payload(file_map + injection_offset, last_entry, header->e_entry);
 		printf("Payload injected\n");
-	} else {
-		
-	}
+	// }
 }
 
 void inject(Elf64_Ehdr *input_header, Elf64_Phdr *input_segment_headers, Elf64_Shdr *input_section_headers, void *input_file_map, off_t input_file_size) {
 	(void)input_section_headers;
 	off_t output_file_size = input_file_size;
-	if (find_code_cave(input_header, input_segment_headers, PAYLOAD_LENGTH) == NULL)
-	{
-		//Make output bigger
-	}
+	// if (find_code_cave(input_header, input_segment_headers, PAYLOAD_LENGTH) == NULL)
+	// {
+		size_t needed_size;
+		if (!get_extend_size(PAYLOAD_LENGTH, input_header, input_segment_headers, &needed_size))
+			return ;
+		output_file_size += needed_size;
+	// }
 	int output_fd = open("woody", O_CREAT | O_RDWR | O_TRUNC, 0777);
 	if (output_fd == -1)
 	{
