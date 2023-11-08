@@ -12,56 +12,54 @@
 
 #include "injection.h"
 
-Elf64_Phdr *get_segment_to_extend(Elf64_Ehdr *header, Elf64_Phdr *program_headers) {
-	for (int i = 0; i < header->e_phnum - 1; i++) {
-		if (program_headers[i].p_type != PT_LOAD)
-			continue;
-		if (!(program_headers[i].p_flags & PF_X))
-			continue;
-		if (program_headers[i + 1].p_type != PT_LOAD)
-			continue;
-		return &program_headers[i];
-	}
-	return NULL;
+bool get_extend_size(size_t payload_length, Elf64_Ehdr *header, Elf64_Shdr *section_headers, size_t *extend_size) {
+	(void)section_headers;
+	(void)header;
+	*extend_size = 0;
+	*extend_size += sizeof(Elf64_Shdr);
+	*extend_size += payload_length;
+	return (true);
 }
 
-bool get_extend_size(size_t payload_length, Elf64_Ehdr *header, Elf64_Phdr *program_headers, size_t *extend_size) {
-	Elf64_Phdr *to_extend = get_segment_to_extend(header, program_headers);
-	if (!to_extend)
-	{
-		fprintf(stderr, "Cannot find a segment to extend\n");
-		return false;
-	}
-	Elf64_Phdr *next_segment = to_extend + 1;
-	size_t available_space = next_segment->p_offset - (to_extend->p_offset + to_extend->p_memsz);
-	size_t needed_size = payload_length;
-	needed_size -= available_space;
-	needed_size += to_extend->p_align - needed_size % to_extend->p_align;
-	*extend_size = needed_size;
-	return true;
+void create_new_section_header(size_t payload_length, Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Shdr *new_section_header, void *output_map) {
+	(void)section_headers;
+	(void)output_map;
+	(void)header;
+	Elf64_Shdr *last_section = &section_headers[header->e_shnum - 1];
+	new_section_header->sh_name = 0;
+	new_section_header->sh_type = SHT_PROGBITS;
+	new_section_header->sh_flags = SHF_ALLOC | SHF_EXECINSTR;
+	new_section_header->sh_addr = last_section->sh_addr + last_section->sh_size;
+	new_section_header->sh_offset = last_section->sh_offset + last_section->sh_size;
+	new_section_header->sh_size = payload_length;
+	new_section_header->sh_link = 0;
+	new_section_header->sh_info = 0;
+	new_section_header->sh_addralign = 0;
+	new_section_header->sh_entsize = 0;
+
+	header->e_shnum++;
 }
 
-void extend_and_shift(size_t payload_length, Elf64_Ehdr *header, Elf64_Phdr *program_headers, Elf64_Shdr *section_headers, Elf64_Phdr *to_extend, void *output_map, size_t output_file_size) {
-	size_t needed_size;
-	if (!get_extend_size(payload_length, header, program_headers, &needed_size))
-		return ;
-	Elf64_Phdr *next_segment = to_extend + 1;
-	header->e_entry = to_extend->p_vaddr + to_extend->p_memsz;
-	size_t new_size = to_extend->p_memsz + needed_size;
-	size_t after_segment_length = output_file_size - next_segment->p_offset;
-	memmove(output_map + to_extend->p_offset + new_size, output_map + next_segment->p_offset, after_segment_length);
-	printf("Moved %zu bytes\n", after_segment_length);
-	bzero(output_map + to_extend->p_offset + to_extend->p_memsz, needed_size);
-	printf("Zeroed %zu bytes\n", needed_size);
-	to_extend->p_memsz = new_size;
-	to_extend->p_filesz = new_size;
-	for (int i = 0; i < header->e_phnum; i++) {
-		if (program_headers[i].p_offset > to_extend->p_offset)
-			program_headers[i].p_offset += needed_size;
-	}
-	for (int i = 0; i < header->e_shnum; i++) {
-		if (section_headers[i].sh_offset > to_extend->p_offset)
-			section_headers[i].sh_offset += needed_size;
-	}
-	header->e_shoff += needed_size;
+void make_space_for_new_section(size_t payload_length, Elf64_Ehdr *header, Elf64_Shdr *section_headers, void *output_map, size_t output_file_size, Elf64_Shdr *new_section_header, off_t old_file_size) {
+	(void)section_headers;
+	(void)output_file_size;
+	off_t begin_new_section = new_section_header->sh_offset;
+	off_t end_new_section = begin_new_section + payload_length;
+	size_t size_to_move = old_file_size - begin_new_section;
+	printf("Begin new section: 0x%.8lx\n", begin_new_section);
+	printf("End new section: 0x%.8lx\n", end_new_section);
+	printf("Size to shift: %ld\n", size_to_move);
+	memmove(output_map + end_new_section, output_map + begin_new_section, size_to_move);
+	header->e_shoff += end_new_section - new_section_header->sh_offset;
+}
+
+size_t extend_and_shift(size_t payload_length, Elf64_Ehdr *header, Elf64_Phdr *program_headers, Elf64_Shdr *section_headers, void *output_map, size_t output_file_size, off_t old_file_size) {
+	(void)output_file_size;
+	(void)output_map;
+	off_t diff = program_headers[0].p_vaddr - program_headers[0].p_offset;
+	Elf64_Shdr *new_section_header = &section_headers[header->e_shnum];
+	create_new_section_header(payload_length, header, section_headers, new_section_header, output_map);
+	make_space_for_new_section(payload_length, header, section_headers, output_map, output_file_size, new_section_header, old_file_size);
+	header->e_entry = diff + new_section_header->sh_offset;
+	return (new_section_header->sh_offset);
 }
