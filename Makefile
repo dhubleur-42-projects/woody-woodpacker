@@ -8,7 +8,8 @@ C_SRCS		= 	\
 				$(addprefix injection/, \
 					inject.c \
 					code_cave.c \
-					elf_parser.c)
+					elf_parser.c \
+					elf_shifting.c)
 
 ASM_SRCS	=	
 

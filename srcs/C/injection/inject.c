@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/22 13:51:00 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/06/22 14:02:59 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,7 @@ void insert_payload(unsigned char *ptr, unsigned int last_entry, unsigned int cu
     ptr += sizeof(text)-1;
 }
 
-void make_injection(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr *segment_headers, void *file_map) {
-	(void)section_headers;
+void make_injection(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr *segment_headers, void *file_map, size_t output_file_size, off_t old_file_size) {
 	Elf64_Phdr *code_cave = find_code_cave(header, segment_headers, PAYLOAD_LENGTH);
 	if (code_cave) {
 		printf("Code cave segment: start: 0x%.8lx, end: 0x%.8lx\n", code_cave->p_offset, code_cave->p_offset + code_cave->p_memsz);
@@ -72,16 +71,26 @@ void make_injection(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr 
 		insert_payload(file_map + injection_offset, last_entry, header->e_entry);
 		printf("Payload injected\n");
 	} else {
-		
+		unsigned int last_entry = header->e_entry;
+		size_t insert = extend_and_shift(PAYLOAD_LENGTH, header, segment_headers, section_headers, file_map, output_file_size, old_file_size);
+		printf("New entry point: 0x%.8lx\n", header->e_entry);
+		insert_payload(file_map + insert, last_entry, header->e_entry);
+		printf("Payload injected\n");
 	}
 }
 
 void inject(Elf64_Ehdr *input_header, Elf64_Phdr *input_segment_headers, Elf64_Shdr *input_section_headers, void *input_file_map, off_t input_file_size) {
-	(void)input_section_headers;
 	off_t output_file_size = input_file_size;
+	off_t old_file_size = input_file_size;
 	if (find_code_cave(input_header, input_segment_headers, PAYLOAD_LENGTH) == NULL)
 	{
-		//Make output bigger
+		printf("===== ELF SHIFTING =====\n");
+		size_t needed_size;
+		if (!get_extend_size(PAYLOAD_LENGTH, input_header, input_section_headers, &needed_size))
+			return ;
+		output_file_size += needed_size;
+	} else {
+		printf("===== CODE CAVE =====\n");
 	}
 	int output_fd = open("woody", O_CREAT | O_RDWR | O_TRUNC, 0777);
 	if (output_fd == -1)
@@ -104,7 +113,7 @@ void inject(Elf64_Ehdr *input_header, Elf64_Phdr *input_segment_headers, Elf64_S
 	Elf64_Ehdr *header = output_file_map;
 	Elf64_Shdr *section_headers = output_file_map + header->e_shoff;
 	Elf64_Phdr *segment_headers = output_file_map + header->e_phoff;
-	make_injection(header, section_headers, segment_headers, output_file_map);
+	make_injection(header, section_headers, segment_headers, output_file_map, output_file_size, old_file_size);
 	munmap(output_file_map, output_file_size);
 	close(output_fd);
 }

@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 14:54:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/22 13:31:50 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/06/22 13:47:28 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,8 @@ void start_injection(char *input_name);
 void inject(Elf64_Ehdr *header_ptr, Elf64_Phdr *segment_headers, Elf64_Shdr *section_headers, void *input_file_map, off_t input_file_size);
 Elf64_Phdr *find_code_cave(Elf64_Ehdr *header, Elf64_Phdr *program_headers, size_t payload_size);
 size_t use_code_cave(Elf64_Ehdr *header, Elf64_Phdr *code_cave_header, size_t payload_size);
+Elf64_Phdr *get_segment_to_extend(Elf64_Ehdr *header, Elf64_Phdr *program_headers);
+bool get_extend_size(size_t payload_length, Elf64_Ehdr *header, Elf64_Shdr *section_headers, size_t *extend_size);
+size_t extend_and_shift(size_t payload_length, Elf64_Ehdr *header, Elf64_Phdr *program_headers, Elf64_Shdr *section_headers, void *output_map, size_t output_file_size, off_t old_file_size);
 
 #endif
