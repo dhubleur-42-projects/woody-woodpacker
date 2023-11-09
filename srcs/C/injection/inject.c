@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/09 15:09:59 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/09 18:04:39 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,24 @@ char key[] = "\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x
 #define PAYLOAD_LENGTH (sizeof(payload_part1)-1 + sizeof(cipher_params)-1 + sizeof(payload_part2)-1 + sizeof(jmp)-1 + sizeof(text)-1 + sizeof(key)-1)
 #define PAYLOAD_CODE_LENGTH (sizeof(payload_part1)-1 + sizeof(cipher_params)-1 + sizeof(payload_part2)-1 + sizeof(jmp)-1)
 
-void insert_payload(unsigned char *ptr, unsigned int last_entry, unsigned int current_entry)
+void insert_payload(unsigned char *ptr, unsigned int last_entry, unsigned int current_entry, Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr *program_headers)
 {	
+	(void)program_headers;
 	printf("Old entry point: 0x%.8x\n", last_entry);
 	int32_t jmp_adr = (int32_t)(last_entry - (current_entry + PAYLOAD_CODE_LENGTH));
 	printf("Computed jump: %d\n", jmp_adr);
 	memcpy(jmp + 1, &jmp_adr, sizeof(jmp_adr));
+
+	memcpy(key, "XXXXXXXXXXXXXXXX", 16);
+
+	Elf64_Shdr *text_section = get_section(".text", header, section_headers);
+	if (text_section == NULL)
+		return ;
+	int32_t text_adr = (int32_t)(text_section->sh_addr);
+	int32_t test_len = (int32_t)(text_section->sh_size);
+
+	memcpy(cipher_params + 1, &text_adr, sizeof(text_adr)); //DOESNT WORK
+	memcpy(cipher_params + 6, &test_len, sizeof(test_len));
 
     memcpy(ptr, payload_part1, sizeof(payload_part1)-1);
 	ptr += sizeof(payload_part1)-1;
@@ -54,13 +66,13 @@ void make_injection(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr 
 		size_t injection_offset = use_code_cave(header, code_cave, PAYLOAD_LENGTH);
 		printf("Code cave header modified, new end: 0x%.8lx\n", code_cave->p_offset + code_cave->p_memsz);
 		printf("New entry point: 0x%.8lx\n", header->e_entry);
-		insert_payload(file_map + injection_offset, last_entry, header->e_entry);
+		insert_payload(file_map + injection_offset, last_entry, header->e_entry, header, section_headers, segment_headers);
 		printf("Payload injected\n");
 	} else {
 		unsigned int last_entry = header->e_entry;
 		size_t insert = extend_and_shift(PAYLOAD_LENGTH, header, segment_headers, section_headers, file_map, output_file_size, old_file_size);
 		printf("New entry point: 0x%.8lx\n", header->e_entry);
-		insert_payload(file_map + insert, last_entry, header->e_entry);
+		insert_payload(file_map + insert, last_entry, header->e_entry, header, section_headers, segment_headers);
 		printf("Payload injected\n");
 	}
 }

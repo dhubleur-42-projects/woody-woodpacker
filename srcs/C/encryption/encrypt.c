@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 13:40:25 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/09 13:54:04 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/09 17:46:10 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,6 @@ void encrypt(Elf64_Ehdr *header, Elf64_Phdr *program_headers, Elf64_Shdr *sectio
 	char *text = file + text_section->sh_offset;
 	int text_size = text_section->sh_size;
 	//TODO: to generate randomly
-	char key[] = "LLD est le meilleur BDE";
+	char key[] = "XXXXXXXXXXXXXXXX";
 	xor_cypher(text, text_size, key);
 }

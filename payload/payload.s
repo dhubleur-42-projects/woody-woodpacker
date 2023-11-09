@@ -8,7 +8,6 @@ _start:
 		push rdi
 		push rsi
 		push rdx
-		push rax
 		push rbx
 
 		; print message
@@ -21,8 +20,8 @@ _start:
         syscall
 
 		; uncipher
-		mov rdi, 0x000000 			;to replace by the data addr
-		mov rsi, 000000  				;to replace by the data len
+		mov rdi, 0x000000 		;to replace by the data addr
+		mov rsi, 000000  		;to replace by the data len
 		mov rdx, [rel key] 		;to replace by the key addr
 		push rdx 				; save key pointer to reset it when end is reached
 		jmp xor_loop
@@ -33,7 +32,7 @@ _start:
 
 			mov rax, [rdi]      ; Load current byte of data into al
 			mov rbx, [rdx]      ; Load current byte of key into bl
-			xor rax, rbx         ; XOR operation
+			xor rax, rbx        ; XOR operation
 			mov [rdi], rax      ; Store the result back in data
 
 			inc rdi				; Increment data pointer
@@ -55,7 +54,6 @@ _start:
 			pop rdx
 			
 			pop rbx
-			pop rax
 			pop rdx
 			pop rsi
 			pop rdi
