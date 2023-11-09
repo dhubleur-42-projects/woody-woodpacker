@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/09 18:04:39 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/09 18:06:02 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,16 @@ void insert_payload(unsigned char *ptr, unsigned int last_entry, unsigned int cu
 	printf("Computed jump: %d\n", jmp_adr);
 	memcpy(jmp + 1, &jmp_adr, sizeof(jmp_adr));
 
+	//TODO: to generate randomly
 	memcpy(key, "XXXXXXXXXXXXXXXX", 16);
 
 	Elf64_Shdr *text_section = get_section(".text", header, section_headers);
 	if (text_section == NULL)
 		return ;
-	int32_t text_adr = (int32_t)(text_section->sh_addr);
+	int32_t text_adr = (int32_t)(text_section->sh_offset);  //TODO: need to add this offset to something
 	int32_t test_len = (int32_t)(text_section->sh_size);
 
-	memcpy(cipher_params + 1, &text_adr, sizeof(text_adr)); //DOESNT WORK
+	memcpy(cipher_params + 1, &text_adr, sizeof(text_adr));
 	memcpy(cipher_params + 6, &test_len, sizeof(test_len));
 
     memcpy(ptr, payload_part1, sizeof(payload_part1)-1);
