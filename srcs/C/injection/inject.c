@@ -6,11 +6,12 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/06/22 14:02:59 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/09 13:50:35 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "injection.h"
+#include "encrypt.h"
 
 /*
 bits 64
@@ -114,6 +115,11 @@ void inject(Elf64_Ehdr *input_header, Elf64_Phdr *input_segment_headers, Elf64_S
 	Elf64_Shdr *section_headers = output_file_map + header->e_shoff;
 	Elf64_Phdr *segment_headers = output_file_map + header->e_phoff;
 	make_injection(header, section_headers, segment_headers, output_file_map, output_file_size, old_file_size);
+
+	printf("===== ENCRYPTING =====\n");
+	encrypt(header, segment_headers, section_headers, output_file_map);
+	printf("===== DONE =====\n");
+
 	munmap(output_file_map, output_file_size);
 	close(output_fd);
 }
