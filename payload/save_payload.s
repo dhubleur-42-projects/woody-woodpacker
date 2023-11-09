@@ -20,8 +20,7 @@ _start:
         syscall
 
 		; uncipher
-		lea rdi, [rel msg]
-		sub rdi, 00000			;to replace by the diff between msg and .text
+		mov rdi, 000000 		;to replace by the data addr
 		mov rsi, 000000  		;to replace by the data len
 		mov rdx, [rel key] 		;to replace by the key addr
 		push rdx 				; save key pointer to reset it when end is reached
