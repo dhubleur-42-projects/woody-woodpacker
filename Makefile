@@ -11,7 +11,8 @@ C_SRCS		= 	\
 					elf_parser.c \
 					elf_shifting.c)
 
-ASM_SRCS	=	
+ASM_SRCS	=	\
+				xor_cypher.s
 
 TEST_SRC	=	test/basic_exec.c
 TEST_NAME	=	test/basic_exec
