@@ -6,59 +6,44 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/09 13:50:35 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/09 15:09:59 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "injection.h"
 #include "encrypt.h"
 
-/*
-bits 64
-default rel
-global _start
-
-_start:
-		push rax
-		push rdi
-		push rsi
-		push rdx
-        xor     eax, eax
-        cdq
-        mov     dl, 10
-        inc     eax
-        mov     edi, eax
-        lea     rsi, [rel msg]
-        syscall
-		pop rdx
-		pop rsi
-		pop rdi
-		pop rax
-		jmp 0x00000000
-
-msg     db "..WOODY..",10
-*/
-
-char payload[] = "\x50\x57\x56\x52\x31\xc0\x99\xb2\x0a\xff\xc0\x89\xc7\x48\x8d\x35\x0b\x00\x00\x00\x0f\x05\x5a\x5e\x5f\x58";
-char text[] = "\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\x0a";
+char payload_part1[] = "\x50\x57\x56\x52\x50\x53\x31\xc0\x99\xb2\x0a\xff\xc0\x89\xc7\x48\x8d\x35\x4a\x00\x00\x00\x0f\x05";
+char cipher_params[] = "\xbf\x00\x00\x00\x00\xbe\x00\x00\x00\x00";
+char payload_part2[] = "\x48\x8b\x15\x41\x00\x00\x00\x52\xeb\x00\x48\x83\xfe\x00\x74\x22\x48\x8b\x07\x48\x8b\x1a\x48\x31\xd8\x48\x89\x07\x48\xff\xc7\x48\xff\xc2\x48\xff\xce\x80\x3a\x00\x74\x02\xeb\xde\x48\x8b\x14\x24\xeb\xd8\x5a\x5b\x58\x5a\x5e\x5f\x58";
 char jmp[] = "\xe9\x00\x00\x00\x00";
 
-#define PAYLOAD_LENGTH (sizeof(payload)-1 + sizeof(text)-1 + sizeof(jmp)-1)
+char text[] = "\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\x0a";
+char key[] = "\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x00";
+
+#define PAYLOAD_LENGTH (sizeof(payload_part1)-1 + sizeof(cipher_params)-1 + sizeof(payload_part2)-1 + sizeof(jmp)-1 + sizeof(text)-1 + sizeof(key)-1)
+#define PAYLOAD_CODE_LENGTH (sizeof(payload_part1)-1 + sizeof(cipher_params)-1 + sizeof(payload_part2)-1 + sizeof(jmp)-1)
 
 void insert_payload(unsigned char *ptr, unsigned int last_entry, unsigned int current_entry)
 {	
-    memcpy(ptr, payload, sizeof(payload)-1);
-    ptr += sizeof(payload)-1;
-
 	printf("Old entry point: 0x%.8x\n", last_entry);
-	int32_t jmp_adr = (int32_t)(last_entry - (current_entry + sizeof(payload)-1 + sizeof(jmp)-1));
+	int32_t jmp_adr = (int32_t)(last_entry - (current_entry + PAYLOAD_CODE_LENGTH));
 	printf("Computed jump: %d\n", jmp_adr);
-	memcpy(jmp + 1, &jmp_adr, sizeof(int32_t));
-    memcpy(ptr, jmp, sizeof(jmp)-1);
-	ptr += sizeof(jmp)-1;
+	memcpy(jmp + 1, &jmp_adr, sizeof(jmp_adr));
 
+    memcpy(ptr, payload_part1, sizeof(payload_part1)-1);
+	ptr += sizeof(payload_part1)-1;
+	memcpy(ptr, cipher_params, sizeof(cipher_params)-1);
+	ptr += sizeof(cipher_params)-1;
+	memcpy(ptr, payload_part2, sizeof(payload_part2)-1);
+	ptr += sizeof(payload_part2)-1;
+	memcpy(ptr, jmp, sizeof(jmp)-1);
+	ptr += sizeof(jmp)-1;
 	memcpy(ptr, text, sizeof(text)-1);
-    ptr += sizeof(text)-1;
+	ptr += sizeof(text)-1;
+	memcpy(ptr, key, sizeof(key)-1);
+	ptr += sizeof(key)-1;
+
 }
 
 void make_injection(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr *segment_headers, void *file_map, size_t output_file_size, off_t old_file_size) {
