@@ -6,23 +6,31 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/09 18:47:55 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/10 14:14:20 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "injection.h"
 #include "encrypt.h"
 
-char payload_part1[] = "\x50\x57\x56\x52\x50\x53\x31\xc0\x99\xb2\x0a\xff\xc0\x89\xc7\x48\x8d\x35\x54\x00\x00\x00\x0f\x05\x48\x8d\x3d\x4b\x00\x00\x00\x00";
-char cipher_params[] = "\x48\x83\xef\x00\x00\x00\x00\xbe\x00\x00\x00\x00";
-char payload_part2[] = "\x48\x8b\x15\x41\x00\x00\x00\x52\xeb\x00\x48\x83\xfe\x00\x74\x22\x48\x8b\x07\x48\x8b\x1a\x48\x31\xd8\x48\x89\x07\x48\xff\xc7\x48\xff\xc2\x48\xff\xce\x80\x3a\x00\x74\x02\xeb\xde\x48\x8b\x14\x24\xeb\xd8\x5a\x5b\x58\x5a\x5e\x5f\x58";
+// char payload_part1[] = "\x50\x57\x56\x52\x50\x53\x31\xc0\x99\xb2\x0a\xff\xc0\x89\xc7\x48\x8d\x35\x54\x00\x00\x00\x0f\x05\x48\x8d\x3d\x4b\x00\x00\x00\x00";
+// char cipher_params[] = "\x48\x83\xef\x00\x00\x00\x00\xbe\x00\x00\x00\x00";
+// char payload_part2[] = "\x48\x8b\x15\x41\x00\x00\x00\x52\xeb\x00\x48\x83\xfe\x00\x74\x22\x48\x8b\x07\x48\x8b\x1a\x48\x31\xd8\x48\x89\x07\x48\xff\xc7\x48\xff\xc2\x48\xff\xce\x80\x3a\x00\x74\x02\xeb\xde\x48\x8b\x14\x24\xeb\xd8\x5a\x5b\x58\x5a\x5e\x5f\x58";
+// char jmp[] = "\xe9\x00\x00\x00\x00";
+
+// char text[] = "\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\x0a";
+// char key[] = "\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x00";
+
+char payload[] = "\x50\x57\x56\x52\x53\x31\xc0\x99\xb2\x0a\xff\xc0\x89\xc7\x48\x8d\x35\x4e\x00\x00\x00\x0f\x05\x48\x8d\x7e\x9d\x48\x2b\x7f\x1b\x48\x8b\x35\x60\x00\x00\x00\x48\x8b\x15\x40\x00\x00\x00\x52\xeb\x00\x48\x83\xfe\x00\x74\x22\x48\x8b\x07\x48\x8b\x1a\x48\x31\xd8\x48\x89\x07\x48\xff\xc7\x48\xff\xc2\x48\xff\xce\x80\x3a\x00\x74\x02\xeb\xde\x48\x8b\x14\x24\xeb\xd8\x5a\x5b\x5a\x5e\x5f\x58";
 char jmp[] = "\xe9\x00\x00\x00\x00";
+char data[] = "\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\x0a\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x00\xb2\xc9\x9e\xb3\x3c\x36\xe3\x05\xd9\x64\xcf\x59\x1e\x9b\xf1\x02";
 
-char text[] = "\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\x0a";
-char key[] = "\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x00";
+#define DATA_KEY &data[10]
+#define DATA_TEXT_OFFSET &data[27]
+#define DATA_DATA_LEN &data[35]
 
-#define PAYLOAD_LENGTH (sizeof(payload_part1)-1 + sizeof(cipher_params)-1 + sizeof(payload_part2)-1 + sizeof(jmp)-1 + sizeof(text)-1 + sizeof(key)-1)
-#define PAYLOAD_CODE_LENGTH (sizeof(payload_part1)-1 + sizeof(cipher_params)-1 + sizeof(payload_part2)-1 + sizeof(jmp)-1)
+#define PAYLOAD_LENGTH (sizeof(payload)-1 + sizeof(jmp)-1 + sizeof(data)-1)
+#define PAYLOAD_CODE_LENGTH (sizeof(payload)-1 + sizeof(jmp)-1)
 
 void insert_payload(unsigned char *ptr, unsigned int last_entry, unsigned int current_entry, Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr *program_headers, off_t payload_offset)
 {	
@@ -32,32 +40,23 @@ void insert_payload(unsigned char *ptr, unsigned int last_entry, unsigned int cu
 	printf("Computed jump: %d\n", jmp_adr);
 	memcpy(jmp + 1, &jmp_adr, sizeof(jmp_adr));
 
-	//TODO: to generate randomly
-	memcpy(key, "XXXXXXXXXXXXXXXX", 16);
+	memcpy(DATA_KEY, "XXXXXXXXXXXXXXXX", 16);
 
 	Elf64_Shdr *text_section = get_section(".text", header, section_headers);
 	if (text_section == NULL)
 		return ;
 	int32_t text_offset = PAYLOAD_CODE_LENGTH;
 	text_offset += payload_offset - text_section->sh_offset;
-	int32_t test_len = (int32_t)(text_section->sh_size);
+	int32_t text_len = (int32_t)(text_section->sh_size);
 
-	memcpy(cipher_params + 4, &text_offset, sizeof(text_offset));
-	memcpy(cipher_params + 9, &test_len, sizeof(test_len));
+	memcpy(DATA_TEXT_OFFSET, &text_offset, sizeof(text_offset));
+	memcpy(DATA_DATA_LEN, &text_len, sizeof(text_len));
 
-    memcpy(ptr, payload_part1, sizeof(payload_part1)-1);
-	ptr += sizeof(payload_part1)-1;
-	memcpy(ptr, cipher_params, sizeof(cipher_params)-1);
-	ptr += sizeof(cipher_params)-1;
-	memcpy(ptr, payload_part2, sizeof(payload_part2)-1);
-	ptr += sizeof(payload_part2)-1;
+    memcpy(ptr, payload, sizeof(payload)-1);
+	ptr += sizeof(payload)-1;
 	memcpy(ptr, jmp, sizeof(jmp)-1);
 	ptr += sizeof(jmp)-1;
-	memcpy(ptr, text, sizeof(text)-1);
-	ptr += sizeof(text)-1;
-	memcpy(ptr, key, sizeof(key)-1);
-	ptr += sizeof(key)-1;
-
+	memcpy(ptr, data, sizeof(data)-1);
 }
 
 void make_injection(Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Phdr *segment_headers, void *file_map, size_t output_file_size, off_t old_file_size) {

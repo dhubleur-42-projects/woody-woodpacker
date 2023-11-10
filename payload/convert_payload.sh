@@ -9,3 +9,4 @@ tr -d ' ' < payload_c > payload_c2
 mv payload_c2 payload_c
 tr -d ',' < payload_c > payload_c2
 mv payload_c2 payload_c
+sed -i 's/\\xe9\\x9d\\xff\\xff\\xff/\n\n&\n\n/g' payload_c

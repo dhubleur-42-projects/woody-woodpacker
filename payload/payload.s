@@ -20,11 +20,11 @@ _start:
         syscall
 
 		; uncipher
-		lea rdi, [rel msg]
-		sub rdi, 00000			;to replace by the diff between msg and .text
-		mov rsi, 000000  		;to replace by the data len
-		mov rdx, [rel key] 		;to replace by the key addr
-		push rdx 				; save key pointer to reset it when end is reached
+		lea rdi, [rsi + (_start - msg)]			; payload addr
+		sub rdi, [rdi + (text_offset - msg)]	; .text addr
+		mov rsi, [rel data_len]
+		mov rdx, [rel key]
+		push rdx 
 		jmp xor_loop
 
 		xor_loop:
@@ -59,8 +59,11 @@ _start:
 			pop rsi
 			pop rdi
 			pop rax
+			
 			jmp 0x000000
 
-; store the messaghe and the key
-msg     db "..WOODY..",10
-key     db "XXXXXXXXXXXXXXXX",0	;to replace by the key
+
+msg     	db "..WOODY..",10
+key     	db "XXXXXXXXXXXXXXXX",0	
+text_offset dq 424242424242424242
+data_len 	dq 212121212121212121
