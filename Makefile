@@ -64,5 +64,8 @@ fclean	:	clean
 
 re		:	fclean ${NAME}
 
+payload:
+		cd payload && sh convert_payload.sh
 
-.PHONY	:	all clean fclean re test
+
+.PHONY	:	all clean fclean re test payload

@@ -20,10 +20,10 @@ _start:
         syscall
 
 		; uncipher
-		lea rdi, [rsi + (_start - msg)]			; payload addr
-		sub rdi, [rdi + (text_offset - msg)]	; .text addr
-		mov rsi, [rel data_len]
-		mov rdx, [rel key]
+		mov rdi, rsp
+		add rdi, text_offset		;rdi = .text address
+		mov rsi, [rel data_len]		;rsi = .data size
+		mov rdx, [rel key]			;rdx = key address
 		push rdx 
 		jmp xor_loop
 
