@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/13 17:29:52 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/13 17:37:07 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void insert_payload(unsigned char *ptr, unsigned int last_entry, unsigned int cu
 	Elf64_Shdr *text_section = get_section(".text", header, section_headers);
 	if (text_section == NULL)
 		return ;
-	int32_t text_offset = payload_offset - text_section->sh_offset;
+	int32_t text_offset = text_section->sh_offset - payload_offset;
 	int32_t text_len = (int32_t)(text_section->sh_size);
 
 	memcpy(DATA_TEXT_OFFSET, &text_offset, sizeof(text_offset));
