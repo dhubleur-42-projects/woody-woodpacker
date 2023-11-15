@@ -14,7 +14,7 @@ C_SRCS		= 	\
 					encrypt.c)
 
 ASM_SRCS	=	\
-				xor_cypher.s
+				xor_cipher.s
 
 TEST_SRC	=	test/basic_exec.c
 TEST_NAME	=	test/basic_exec

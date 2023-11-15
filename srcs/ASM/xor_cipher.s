@@ -1,9 +1,9 @@
 section .text
-	global xor_cypher
+	global xor_cipher
 
-; void xor_cypher(char *data, int size, char *key);
-; xor_cypher(rdi data, rsi size, rdx key);
-xor_cypher:
+; void xor_cipher(char *data, int size, char *key);
+; xor_cipher(rdi data, rsi size, rdx key);
+xor_cipher:
 	push rdx 				; save key pointer to reset it when end is reached
 
 	jmp xor_loop

@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 13:40:25 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/15 14:10:36 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/15 17:13:21 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,5 @@ void encrypt(Elf64_Ehdr *header, Elf64_Phdr *program_headers, Elf64_Shdr *sectio
 	int text_size = text_section->sh_size;
 	//TODO: to generate randomly
 	char key[] = "XXXXXXXXXXXXXXXX";
-	xor_cypher(text, text_size, key);
+	xor_cipher(text, text_size, key);
 }
