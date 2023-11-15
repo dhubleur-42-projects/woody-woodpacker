@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/15 13:47:03 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/15 14:10:48 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,26 @@ void insert_payload(unsigned char *ptr, unsigned int last_entry, unsigned int cu
 	memcpy(DATA_KEY, "XXXXXXXXXXXXXXXX", 16);
 
 	Elf64_Shdr *text_section = get_section(".text", header, section_headers);
-	if (text_section == NULL)
+	if (text_section == NULL) {
+		printf("Cannot find .text section\n");
 		return ;
+	}
 	printf(".text address: 0x%.8lx\n", text_section->sh_addr);
 	text_section->sh_flags |= SHF_WRITE;
+	Elf64_Phdr *text_segment = NULL;
+	for (size_t i = 0; i < header->e_phnum; i++)
+	{
+		if (program_headers[i].p_offset <= text_section->sh_offset && program_headers[i].p_offset + program_headers[i].p_filesz >= text_section->sh_offset + text_section->sh_size)
+		{
+			text_segment = &program_headers[i];
+			break ;
+		}
+	}
+	if (text_segment == NULL) {
+		printf("Cannot find text segment\n");
+		return ;
+	}
+	text_segment->p_flags |= PF_W | PF_R;
 	int32_t text_offset = payload_offset - text_section->sh_offset;
 	int32_t text_len = (int32_t)(text_section->sh_size);
 
