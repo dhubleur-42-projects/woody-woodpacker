@@ -1,7 +1,6 @@
 NAME		=	woody_woodpacker
 
 C_SRCS		= 	\
-				get_key.c \
 				main.c \
 				libft.c \
 				random.c \
