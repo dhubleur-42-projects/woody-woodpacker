@@ -20,10 +20,13 @@ _start:
         syscall
 
 		; uncipher
-		mov rdi, rsp
-		add rdi, text_offset		;rdi = .text address
-		mov rsi, [rel data_len]		;rsi = .data size
-		mov rdx, [rel key]			;rdx = key address
+		lea r8, [rel msg] 						;msg address
+  		lea r9, [r8 + (_start - msg)] 			;payload address
+		mov rdi, r9
+  		sub rdi, [r8 + (text_offset - msg)] 	;rdi = .text address
+		mov rsi, [rel data_len]					;rsi = .data size
+		lea rdx, [rel key]						;rdx = key address
+		
 		push rdx 
 		jmp xor_loop
 
@@ -31,8 +34,8 @@ _start:
 			cmp rsi, 0			; Check if size is 0
 			je xor_end
 
-			mov rax, [rdi]      ; Load current byte of data into al
-			mov rbx, [rdx]      ; Load current byte of key into bl
+			mov rax, [rdi]      ; Load current byte of data
+			mov rbx, [rdx]      ; Load current byte of key
 			xor rax, rbx        ; XOR operation
 			mov [rdi], rax      ; Store the result back in data
 
@@ -65,5 +68,5 @@ _start:
 
 msg     	db "..WOODY..",10
 key     	db "XXXXXXXXXXXXXXXX",0	
-text_offset dq 424242424242424242
-data_len 	dq 212121212121212121
+text_offset dq 0x00000000
+data_len 	dq 0x00000000
