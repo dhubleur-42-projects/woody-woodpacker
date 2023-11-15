@@ -32,10 +32,10 @@ _start:
 			cmp rsi, 0			; Check if size is 0
 			je xor_end
 
-			mov rax, [rdi]      ; Load current byte of data
-			mov rbx, [rdx]      ; Load current byte of key
-			xor rax, rbx        ; XOR operation
-			mov [rdi], rax      ; Store the result back in data
+			mov al, [rdi]      ; Load current byte of data
+			mov bl, [rdx]      ; Load current byte of key
+			xor al, bl        ; XOR operation
+			mov [rdi], al      ; Store the result back in data
 
 			inc rdi				; Increment data pointer
 			inc rdx				; Increment key pointer
