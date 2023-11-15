@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 17:35:36 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/15 17:50:53 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/15 18:00:49 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ typedef struct s_options
 	char	*seed;
 	bool	compression;
 	bool	help;
+	bool 	verbose;
 }	t_options;
 
 typedef struct s_parser

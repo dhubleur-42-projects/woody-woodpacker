@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 17:42:00 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/15 17:49:09 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/15 18:01:01 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@ bool parse_options(int argc, char **argv, int *current_arg, t_options *options)
 			break;
 		case 'c':
 			options->compression = true;
+			break;
+		case 'v':
+			options->verbose = true;
 			break;
 		case 's':
 			if (!parse_seed(argc, argv, current_arg, options))

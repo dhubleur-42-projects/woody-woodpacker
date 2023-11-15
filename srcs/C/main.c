@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 15:02:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/15 17:57:38 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/15 18:01:08 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void print_help() {
 	printf("\t-h\t\tPrint this help\n");
 	printf("\t-c\t\tCompress the binary with [ALGORITHM]\n");
 	printf("\t-s [SEED]\tUse SEED to generate the encryption key (can be any ascii string)\n");
+	printf("\t-v\t\tVerbose mode\n");
 }
 
 int	main(int ac, char **av) {
