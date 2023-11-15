@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 17:37:30 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/15 18:01:19 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/15 18:02:56 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 bool	parse(int argc, char **argv, t_parser *parser)
 {
-	parser->options = (t_options) {NULL, false, false, false};
+	parser->options = (t_options) {NULL, NULL, false, false, false};
 	parser->input = NULL;
 
 	for (int i = 1; i < argc; i++)
