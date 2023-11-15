@@ -4,6 +4,9 @@ C_SRCS		= 	\
 				main.c \
 				libft.c \
 				random.c \
+				$(addprefix parser/, \
+					parser.c \
+					parse_options.c) \
 				$(addprefix injection/, \
 					inject.c \
 					code_cave.c \
