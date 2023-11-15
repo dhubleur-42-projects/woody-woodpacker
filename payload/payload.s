@@ -20,10 +20,8 @@ _start:
         syscall
 
 		; uncipher
-		lea r8, [rel msg] 						;msg address
-  		lea r9, [r8 + (_start - msg)] 			;payload address
-		mov rdi, r9
-  		sub rdi, [r8 + (text_offset - msg)] 	;rdi = .text address
+  		lea rdi, [rsi + (_start - msg)] 		;payload address
+  		sub rdi, [rsi + (text_offset - msg)] 	;rdi = .text address
 		mov rsi, [rel data_len]					;rsi = .data size
 		lea rdx, [rel key]						;rdx = key address
 		
