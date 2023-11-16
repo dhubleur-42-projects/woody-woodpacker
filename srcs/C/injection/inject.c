@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 15:55:56 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:04:50 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,12 @@ void inject(t_injection injection, t_options options)
 	int32_t text_len = (int32_t)(injection.encrypt_size);
 	memcpy(DATA_DATA_LEN, &text_len, sizeof(text_len));
 
-	memcpy(injection.file_map + injection.payload_offset, payload, sizeof(payload)-1);
-	memcpy(injection.file_map + injection.payload_offset + sizeof(payload)-1, jmp, sizeof(jmp)-1);
-	memcpy(injection.file_map + injection.payload_offset + sizeof(payload)-1 + sizeof(jmp)-1, data, sizeof(data)-1);
-	printf("Payload injected at: 0x%.8lx\n", injection.payload_offset);
+	char *ptr = injection.file_map + injection.encrypt_offset;
+	memcpy(ptr, payload, sizeof(payload) - 1);
+	ptr += sizeof(payload) - 1;
+	memcpy(ptr, jmp, sizeof(jmp) - 1);
+	ptr += sizeof(jmp) - 1;
+	memcpy(ptr, data, sizeof(data) - 1);
+	if (options.verbose)
+		printf("Payload injected at: 0x%.8lx\n", injection.payload_offset);
 }

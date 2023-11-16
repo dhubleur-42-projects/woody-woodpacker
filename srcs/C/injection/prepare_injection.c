@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:52:59 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 15:54:50 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:08:40 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,4 +18,10 @@ bool	prepare_injection(t_file file, t_injection *injection, t_options options)
 	if (file.type == ELF64)
 		return (prepare_injection_elf64(file, injection, options));
 	return (false);
+}
+
+void end_injection(t_injection injection)
+{
+	munmap(injection.file_map, injection.file_size);
+	close(injection.fd);
 }

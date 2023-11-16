@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 15:02:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 15:46:43 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:08:04 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,5 +66,6 @@ int	main(int ac, char **av) {
 	inject(injection, parser.options);
 	if (parser.options.verbose)
 		printf("================================\n");
+	end_injection(injection);
 	return (0);
 }

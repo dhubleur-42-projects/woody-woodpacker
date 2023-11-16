@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:53:20 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 15:53:24 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:07:57 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef struct s_injection
 
 bool	prepare_injection(t_file file, t_injection *injection, t_options options);
 bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options options);
+void end_injection(t_injection injection);
 
 Elf64_Phdr *find_code_cave_elf64(t_file_elf64 file_elf64, size_t payload_size);
 size_t use_code_cave_elf64(Elf64_Ehdr *header, Elf64_Phdr *code_cave_header, size_t payload_size, t_injection *injection);
