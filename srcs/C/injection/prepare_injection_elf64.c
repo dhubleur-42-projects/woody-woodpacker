@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:58:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 16:32:05 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:39:03 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 	output_file.header = (Elf64_Ehdr *)injection->file_map;
 	output_file.sections = (Elf64_Shdr *)(injection->file_map + output_file.header->e_shoff);
 	output_file.programs = (Elf64_Phdr *)(injection->file_map + output_file.header->e_phoff);
+	code_cave = find_code_cave_elf64(output_file, get_payload_length());
 	if (code_cave == NULL)
 		injection->payload_offset = extend_and_shift_elf64(get_payload_length(), output_file, injection->file_map, file.size, injection);
 	else
