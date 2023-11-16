@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:58:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 17:26:12 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 17:59:22 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,14 +60,12 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 	if (lseek(injection->fd, injection->file_size-1, SEEK_SET) == -1)
 	{
 		perror("Cannot seek file");
-		close(injection->fd);
 		return false;
 	}
 	write(injection->fd, "", 1);
 	injection->file_map = mmap(NULL, injection->file_size,  PROT_WRITE, MAP_SHARED, injection->fd, 0);
 	if (injection->file_map == MAP_FAILED) {
 		perror("Cannot map output file");
-		close(injection->fd);
 		return false;
 	}
 	if (options.verbose)

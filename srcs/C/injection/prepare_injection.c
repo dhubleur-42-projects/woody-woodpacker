@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:52:59 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 16:08:40 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 17:59:15 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ bool	prepare_injection(t_file file, t_injection *injection, t_options options)
 
 void end_injection(t_injection injection)
 {
-	munmap(injection.file_map, injection.file_size);
-	close(injection.fd);
+	if (injection.file_map != NULL)
+		munmap(injection.file_map, injection.file_size);
+	if (injection.fd != -1)
+		close(injection.fd);
 }
