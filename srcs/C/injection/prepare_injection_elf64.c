@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:58:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 17:20:54 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 17:26:12 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,15 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 	output_file.sections = (Elf64_Shdr *)(injection->file_map + output_file.header->e_shoff);
 	output_file.programs = (Elf64_Phdr *)(injection->file_map + output_file.header->e_phoff);
 	code_cave = find_code_cave_elf64(output_file, get_payload_length());
+	
+	if (code_cave == NULL)
+		injection->payload_offset = extend_and_shift_elf64(get_payload_length(), output_file, injection->file_map, file.size, injection, options);
+	else
+	{
+		injection->payload_offset = use_code_cave_elf64(output_file.header, code_cave, get_payload_length(), injection);
+		if (options.verbose)
+			printf("Code cave header modified, new end: 0x%.8lx\n", code_cave->p_offset + code_cave->p_memsz);
+	}
 
 	Elf64_Shdr *text_section = get_section(".text", output_file.header, output_file.sections);
 	if (text_section == NULL)
@@ -85,16 +94,6 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 		dprintf(2, "Cannot find .text section\n");
 		return false;
 	}
-	
-	if (code_cave == NULL)
-		injection->payload_offset = extend_and_shift_elf64(get_payload_length(), output_file, injection->file_map, file.size, injection);
-	else
-	{
-		injection->payload_offset = use_code_cave_elf64(output_file.header, code_cave, get_payload_length(), injection);
-		if (options.verbose)
-			printf("Code cave header modified, new end: 0x%.8lx\n", code_cave->p_offset + code_cave->p_memsz);
-	}
-	
 	text_section->sh_flags |= SHF_WRITE;
 	injection->encrypt_offset = text_section->sh_offset;
 	injection->encrypt_size = text_section->sh_size;
