@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 15:02:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 14:20:18 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 14:46:51 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,16 @@ int	main(int ac, char **av) {
 		return (1);
 	}
 	t_file file;
+	if (parser.options.verbose)
+		printf("================================\n");
 	if (!get_file_type(parser.input, &file, parser.options))
 		return (1);
+	if (parser.options.verbose)
+		printf("================================\n");
 	if (!get_specific_file(&file, parser.options))
 		return (1);
+	if (parser.options.verbose)
+		printf("================================\n");
+	close_file(file);
 	return (0);
 }
