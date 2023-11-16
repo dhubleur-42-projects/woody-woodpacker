@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 16:13:03 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:27:29 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void inject(t_injection injection, t_options options)
 	int32_t text_len = (int32_t)(injection.encrypt_size);
 	memcpy(DATA_TEXT_LEN, &text_len, sizeof(text_len));
 
-	char *ptr = injection.file_map + injection.encrypt_offset;
+	char *ptr = injection.file_map + injection.payload_offset;
 	memcpy(ptr, payload, sizeof(payload) - 1);
 	ptr += sizeof(payload) - 1;
 	memcpy(ptr, jmp, sizeof(jmp) - 1);

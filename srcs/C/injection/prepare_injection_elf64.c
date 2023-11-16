@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:58:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 15:53:42 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:32:05 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,6 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 	{
 		if (options.verbose)
 			printf("Find a code cave in a segment: start: 0x%.8lx, end: 0x%.8lx\n", code_cave->p_offset, code_cave->p_offset + code_cave->p_memsz);
-		injection->payload_offset = use_code_cave_elf64(file_efl64.header, code_cave, get_payload_length(), injection);
-		if (options.verbose)
-			printf("Code cave header modified, new end: 0x%.8lx\n", code_cave->p_offset + code_cave->p_memsz);
 	}
 	else
 	{
@@ -82,6 +79,12 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 	output_file.programs = (Elf64_Phdr *)(injection->file_map + output_file.header->e_phoff);
 	if (code_cave == NULL)
 		injection->payload_offset = extend_and_shift_elf64(get_payload_length(), output_file, injection->file_map, file.size, injection);
+	else
+	{
+		injection->payload_offset = use_code_cave_elf64(output_file.header, code_cave, get_payload_length(), injection);
+		if (options.verbose)
+			printf("Code cave header modified, new end: 0x%.8lx\n", code_cave->p_offset + code_cave->p_memsz);
+	}
 	
 	Elf64_Shdr *text_section = get_section(".text", output_file.header, output_file.sections);
 	if (text_section == NULL)
