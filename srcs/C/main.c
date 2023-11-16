@@ -6,13 +6,14 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 15:02:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 15:00:07 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 15:37:32 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "parser.h"
 #include "prepare_injection.h"
+#include "encrypt.h"
 
 void print_help() {
 	printf("USAGE: ./woody_woodpacker <options> [file]\n");
@@ -52,8 +53,14 @@ int	main(int ac, char **av) {
 	t_injection injection;
 	if (!prepare_injection(file, &injection, parser.options))
 		return (1);
+	close_file(file);
 	if (parser.options.verbose)
 		printf("================================\n");
-	close_file(file);
+	xor_cipher(injection.file_map + injection.encrypt_offset, injection.encrypt_size, "XXXXXXXXXXXXXXXX");
+	if (parser.options.verbose)
+	{
+		printf("Cipher applied on %d bytes\n", injection.encrypt_size);
+		printf("================================\n");
+	}
 	return (0);
 }
