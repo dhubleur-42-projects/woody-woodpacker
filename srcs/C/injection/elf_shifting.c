@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 13:43:11 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 15:53:26 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 17:11:48 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ size_t get_extend_size_elf64(size_t payload_length) {
 
 void create_new_section_header_elf64(size_t payload_length, Elf64_Ehdr *header, Elf64_Shdr *section_headers, Elf64_Shdr *new_section_header) {
 	Elf64_Shdr *last_section = &section_headers[header->e_shnum - 1];
-	new_section_header->sh_name = 0;
+	new_section_header->sh_name = 1;
 	new_section_header->sh_type = SHT_PROGBITS;
 	new_section_header->sh_flags = SHF_ALLOC | SHF_EXECINSTR;
 	new_section_header->sh_addr = last_section->sh_addr + last_section->sh_size;

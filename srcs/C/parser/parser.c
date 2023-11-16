@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 17:37:30 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 16:58:29 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 17:24:00 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,15 @@ bool	parse(int argc, char **argv, t_parser *parser)
 		else
 		{
 			if (parser->input == NULL) {
+				char *last_slash = strrchr(argv[i], '/');
+				if (last_slash == NULL)
+					last_slash = argv[i];
+				else
+					last_slash++;
+				if (strcmp(last_slash, "woody") == 0) {
+					printf("Cannot pack woody\n");
+					return (false);
+				}
 				parser->input = argv[i];
 			} else {
 				printf(USAGE_ERROR);

@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:58:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 16:39:03 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 17:20:54 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ Elf64_Shdr *get_section(char *name, Elf64_Ehdr *header, Elf64_Shdr *section_head
 	int i;
 
 	i = 0;
-	while (i < header->e_shnum)
+	while (i < header->e_shnum - 1)
 	{
 		if (strcmp(name, get_section_name(header, section_headers, i)) == 0)
 			return (&section_headers[i]);
@@ -78,6 +78,14 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 	output_file.sections = (Elf64_Shdr *)(injection->file_map + output_file.header->e_shoff);
 	output_file.programs = (Elf64_Phdr *)(injection->file_map + output_file.header->e_phoff);
 	code_cave = find_code_cave_elf64(output_file, get_payload_length());
+
+	Elf64_Shdr *text_section = get_section(".text", output_file.header, output_file.sections);
+	if (text_section == NULL)
+	{
+		dprintf(2, "Cannot find .text section\n");
+		return false;
+	}
+	
 	if (code_cave == NULL)
 		injection->payload_offset = extend_and_shift_elf64(get_payload_length(), output_file, injection->file_map, file.size, injection);
 	else
@@ -87,12 +95,6 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 			printf("Code cave header modified, new end: 0x%.8lx\n", code_cave->p_offset + code_cave->p_memsz);
 	}
 	
-	Elf64_Shdr *text_section = get_section(".text", output_file.header, output_file.sections);
-	if (text_section == NULL)
-	{
-		dprintf(2, "Cannot find .text section\n");
-		return false;
-	}
 	text_section->sh_flags |= SHF_WRITE;
 	injection->encrypt_offset = text_section->sh_offset;
 	injection->encrypt_size = text_section->sh_size;
@@ -106,11 +108,9 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 			break ;
 		}
 	}
-	if (text_segment == NULL) {
-		printf("Cannot find the segment containing the .text section\n");
-		return false;
+	if (text_segment != NULL) {
+		text_segment->p_flags |= PF_W | PF_R;
 	}
-	text_segment->p_flags |= PF_W | PF_R;
 
 	return true;
 }
