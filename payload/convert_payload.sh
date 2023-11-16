@@ -1,5 +1,7 @@
 rm -f payload_c
 nasm -f bin -o payload payload.s
+size=$(wc -c < payload)
+echo "Payload uses $size bytes"
 xxd -i -c 8 < payload > payload_c
 rm payload
 sed -i 's/0x\([0-9a-f][0-9a-f]\)/\\x\1/g' payload_c
