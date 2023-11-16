@@ -6,12 +6,12 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 13:56:36 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/22 13:33:59 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 14:21:59 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ELF_H
-# define ELF_H
+#ifndef ELF_PARSER_H
+# define ELF_PARSER_H
 
 # include <elf.h>
 # include <stdio.h>
@@ -20,6 +20,11 @@
 # include <stdbool.h>
 # include <stdlib.h>
 
-void start_injection(char *input_name);
+# include "parser.h"
+
+typedef struct s_file t_file;
+typedef struct s_options t_options;
+
+bool parse_elf64(int fd, t_file *file, t_options options);
 
 #endif

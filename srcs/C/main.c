@@ -6,11 +6,10 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 15:02:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/15 18:06:10 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 14:20:18 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "elf_parser.h"
 #include "libft.h"
 #include "parser.h"
 
@@ -38,6 +37,10 @@ int	main(int ac, char **av) {
 		printf("usage: ./woody_woodpacker <options> [file]\n");
 		return (1);
 	}
-	start_injection(parser.input);
+	t_file file;
+	if (!get_file_type(parser.input, &file, parser.options))
+		return (1);
+	if (!get_specific_file(&file, parser.options))
+		return (1);
 	return (0);
 }

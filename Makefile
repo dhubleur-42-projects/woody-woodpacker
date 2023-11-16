@@ -6,11 +6,11 @@ C_SRCS		= 	\
 				random.c \
 				$(addprefix parser/, \
 					parser.c \
-					parse_options.c) \
+					parse_options.c \
+					elf64_parser.c) \
 				$(addprefix injection/, \
 					inject.c \
 					code_cave.c \
-					elf_parser.c \
 					elf_shifting.c) \
 				$(addprefix encryption/, \
 					encrypt.c)
@@ -52,7 +52,7 @@ $(NAME)	:	$(OBJS)
 -include $(OBJS_DEPEND)
 
 test	:	all $(TEST_NAME)
-	./$(NAME) $(TEST_NAME)
+	./$(NAME) -v $(TEST_NAME)
 
 $(TEST_NAME)	:	$(TEST_SRC)
 	$(CC) $(CFLAGS) $(TEST_SRC) -o $(TEST_NAME)
