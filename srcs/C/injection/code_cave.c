@@ -6,14 +6,15 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 14:54:29 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 15:05:06 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 15:52:16 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "prepare_injection.h"
 
-size_t use_code_cave_elf64(Elf64_Ehdr *header, Elf64_Phdr *code_cave_header, size_t payload_size) {
+size_t use_code_cave_elf64(Elf64_Ehdr *header, Elf64_Phdr *code_cave_header, size_t payload_size, t_injection *injection) {
 	header->e_entry = code_cave_header->p_vaddr + code_cave_header->p_memsz;
+	injection->new_entrypoint = header->e_entry;
 	code_cave_header->p_memsz += payload_size;
     code_cave_header->p_filesz += payload_size;
 	return code_cave_header->p_offset + code_cave_header->p_memsz - payload_size;

@@ -6,16 +6,11 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:58:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 15:33:49 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 15:53:42 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "prepare_injection.h"
-
-char payload[] = "\x50\x57\x56\x52\x53\x31\xc0\x99\xb2\x0a\xff\xc0\x89\xc7\x48\x8d\x35\x4a\x00\x00\x00\x0f\x05\x48\x8d\x7e\xa1\x48\x2b\x7e\x1b\x48\x8b\x35\x5c\x00\x00\x00\x48\x8d\x15\x3c\x00\x00\x00\x52\xeb\x00\x48\x83\xfe\x00\x74\x1e\x8a\x07\x8a\x1a\x30\xd8\x88\x07\x48\xff\xc7\x48\xff\xc2\x48\xff\xce\x80\x3a\x00\x74\x02\xeb\xe2\x48\x8b\x14\x24\xeb\xdc\x5a\x5b\x5a\x5e\x5f\x58";
-char jmp[] = "\xe9\x00\x00\x00\x00";
-char data[] = "\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\x0a\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x58\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-#define PAYLOAD_LENGTH (sizeof(payload)-1 + sizeof(jmp)-1 + sizeof(data)-1)
 
 char *get_section_name(Elf64_Ehdr *header, Elf64_Shdr *section_headers, int index)
 {
@@ -41,14 +36,14 @@ Elf64_Shdr *get_section(char *name, Elf64_Ehdr *header, Elf64_Shdr *section_head
 bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options options)
 {
 	t_file_elf64 file_efl64 = *((t_file_elf64 *)file.specific_file);
-	Elf64_Phdr *code_cave = find_code_cave_elf64(file_efl64, PAYLOAD_LENGTH);
+	Elf64_Phdr *code_cave = find_code_cave_elf64(file_efl64, get_payload_length());
 	size_t expand_size = 0;
-	injection->old_entrypoint_offset = file_efl64.header->e_entry;
+	injection->old_entrypoint = file_efl64.header->e_entry;
 	if (code_cave != NULL)
 	{
 		if (options.verbose)
 			printf("Find a code cave in a segment: start: 0x%.8lx, end: 0x%.8lx\n", code_cave->p_offset, code_cave->p_offset + code_cave->p_memsz);
-		injection->new_entrypoint_offset = use_code_cave_elf64(file_efl64.header, code_cave, PAYLOAD_LENGTH);
+		injection->payload_offset = use_code_cave_elf64(file_efl64.header, code_cave, get_payload_length(), injection);
 		if (options.verbose)
 			printf("Code cave header modified, new end: 0x%.8lx\n", code_cave->p_offset + code_cave->p_memsz);
 	}
@@ -56,7 +51,7 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 	{
 		if (options.verbose)
 			printf("No code cave found, need to extend file\n");
-		expand_size = get_extend_size_elf64(PAYLOAD_LENGTH);
+		expand_size = get_extend_size_elf64(get_payload_length());
 	}
 	injection->fd = open("woody", O_CREAT | O_RDWR | O_TRUNC, 0777);
 	if (injection->fd == -1)
@@ -86,7 +81,7 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 	output_file.sections = (Elf64_Shdr *)(injection->file_map + output_file.header->e_shoff);
 	output_file.programs = (Elf64_Phdr *)(injection->file_map + output_file.header->e_phoff);
 	if (code_cave == NULL)
-		injection->new_entrypoint_offset = extend_and_shift_elf64(PAYLOAD_LENGTH, output_file, injection->file_map, file.size);
+		injection->payload_offset = extend_and_shift_elf64(get_payload_length(), output_file, injection->file_map, file.size, injection);
 	
 	Elf64_Shdr *text_section = get_section(".text", output_file.header, output_file.sections);
 	if (text_section == NULL)
@@ -94,7 +89,24 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 		dprintf(2, "Cannot find .text section\n");
 		return false;
 	}
+	text_section->sh_flags |= SHF_WRITE;
 	injection->encrypt_offset = text_section->sh_offset;
 	injection->encrypt_size = text_section->sh_size;
+
+	Elf64_Phdr *text_segment = NULL;
+	for (size_t i = 0; i < output_file.header->e_phnum; i++)
+	{
+		if (output_file.programs[i].p_offset <= text_section->sh_offset && output_file.programs[i].p_offset + output_file.programs[i].p_filesz >= text_section->sh_offset + text_section->sh_size)
+		{
+			text_segment = &(output_file.programs[i]);
+			break ;
+		}
+	}
+	if (text_segment == NULL) {
+		printf("Cannot find the segment containing the .text section\n");
+		return false;
+	}
+	text_segment->p_flags |= PF_W | PF_R;
+
 	return true;
 }

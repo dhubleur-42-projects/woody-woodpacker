@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 15:02:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 15:37:32 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 15:46:43 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "parser.h"
 #include "prepare_injection.h"
 #include "encrypt.h"
+#include "injection.h"
 
 void print_help() {
 	printf("USAGE: ./woody_woodpacker <options> [file]\n");
@@ -62,5 +63,8 @@ int	main(int ac, char **av) {
 		printf("Cipher applied on %d bytes\n", injection.encrypt_size);
 		printf("================================\n");
 	}
+	inject(injection, parser.options);
+	if (parser.options.verbose)
+		printf("================================\n");
 	return (0);
 }

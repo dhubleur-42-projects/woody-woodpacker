@@ -12,7 +12,8 @@ C_SRCS		= 	\
 					code_cave.c \
 					elf_shifting.c \
 					prepare_injection_elf64.c \
-					prepare_injection.c)
+					prepare_injection.c \
+					inject.c)
 
 ASM_SRCS	=	\
 				xor_cipher.s

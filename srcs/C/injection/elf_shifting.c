@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 13:43:11 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 15:29:45 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 15:53:26 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,13 @@ void make_space_for_new_section_elf64(size_t payload_length, Elf64_Ehdr *header,
 	header->e_shoff += end_new_section - new_section_header->sh_offset;
 }
 
-size_t extend_and_shift_elf64(size_t payload_length, t_file_elf64 file, void *output_map, off_t old_file_size) {
+size_t extend_and_shift_elf64(size_t payload_length, t_file_elf64 file, void *output_map, off_t old_file_size, t_injection *injection) {
 	off_t diff = file.programs[0].p_vaddr - file.programs[0].p_offset;
 	Elf64_Shdr *new_section_header = &(file.sections[file.header->e_shnum]);
 	create_new_section_header_elf64(payload_length, file.header, file.sections, new_section_header);
 	make_space_for_new_section_elf64(payload_length, file.header, output_map, new_section_header, old_file_size);
 	file.header->e_entry = diff + new_section_header->sh_offset;
+	injection->new_entrypoint = file.header->e_entry;
 	return (new_section_header->sh_offset);
+
 }
