@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 15:02:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 16:08:04 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:58:10 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include "injection.h"
 
 void print_help() {
-	printf("USAGE: ./woody_woodpacker <options> [file]\n");
+	printf(USAGE_ERROR);
 	printf("Pack an ELF binary into a self-decrypting binary called 'woody'\n\n");
 	printf("The FILE argument must be an ELF 64 binary\n\n");
 	printf("OPTIONS:\n");
@@ -37,7 +37,7 @@ int	main(int ac, char **av) {
 		return (0);
 	}
 	if (parser.input == NULL) {
-		printf("usage: ./woody_woodpacker <options> [file]\n");
+		printf(USAGE_ERROR);
 		return (1);
 	}
 	t_file file;

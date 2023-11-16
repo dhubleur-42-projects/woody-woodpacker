@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 17:35:36 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 14:16:59 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:57:58 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 # include <unistd.h>
 
 # include "elf_parser.h"
+
+# define USAGE_ERROR "usage: ./woody_woodpacker <options> [file]\n"
 
 typedef struct s_options
 {

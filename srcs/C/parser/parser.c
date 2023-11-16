@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 17:37:30 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 14:24:47 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:58:29 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ bool	parse(int argc, char **argv, t_parser *parser)
 		if (argv[i][0] == '-')
 		{
 			if (strlen(argv[i]) != 2) {
-				printf("usage: ./woody_woodpacker <options> [file]\n");
+				printf(USAGE_ERROR);
 				return (false);
 			}
 			if (!parse_options(argc, argv, &i, &parser->options))
@@ -33,7 +33,7 @@ bool	parse(int argc, char **argv, t_parser *parser)
 			if (parser->input == NULL) {
 				parser->input = argv[i];
 			} else {
-				printf("usage: ./woody_woodpacker <options> [file]\n");
+				printf(USAGE_ERROR);
 				return (false);
 			}
 		}
