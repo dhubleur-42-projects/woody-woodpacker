@@ -9,11 +9,10 @@ C_SRCS		= 	\
 					parse_options.c \
 					elf64_parser.c) \
 				$(addprefix injection/, \
-					inject.c \
 					code_cave.c \
-					elf_shifting.c) \
-				$(addprefix encryption/, \
-					encrypt.c)
+					elf_shifting.c \
+					prepare_injection_elf64.c \
+					prepare_injection.c)
 
 ASM_SRCS	=	\
 				xor_cipher.s
