@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 16:04:50 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:13:03 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char data[] = "\x2e\x2e\x57\x4f\x4f\x44\x59\x2e\x2e\x0a\x58\x58\x58\x58\x58\x58\
 
 #define DATA_KEY &data[10]
 #define DATA_TEXT_OFFSET &data[27]
-#define DATA_DATA_LEN &data[35]
+#define DATA_TEXT_LEN &data[35]
 
 #define PAYLOAD_LENGTH (sizeof(payload)-1 + sizeof(jmp)-1 + sizeof(data)-1)
 #define PAYLOAD_CODE_LENGTH (sizeof(payload)-1 + sizeof(jmp)-1)
@@ -44,7 +44,7 @@ void inject(t_injection injection, t_options options)
 	memcpy(DATA_TEXT_OFFSET, &text_offset, sizeof(text_offset));
 
 	int32_t text_len = (int32_t)(injection.encrypt_size);
-	memcpy(DATA_DATA_LEN, &text_len, sizeof(text_len));
+	memcpy(DATA_TEXT_LEN, &text_len, sizeof(text_len));
 
 	char *ptr = injection.file_map + injection.encrypt_offset;
 	memcpy(ptr, payload, sizeof(payload) - 1);
