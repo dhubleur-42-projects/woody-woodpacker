@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 15:02:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 17:21:17 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/17 15:45:00 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "prepare_injection.h"
 #include "encrypt.h"
 #include "injection.h"
+#include "key_generator.h"
 
 void print_help() {
 	printf(USAGE_ERROR);
@@ -57,6 +58,9 @@ int	main(int ac, char **av) {
 	close_file(file);
 	if (parser.options.verbose)
 		printf("================================\n");
+	char key[17];
+	get_key(parser.options, key);
+	printf("Key: %s\n", key);
 	xor_cipher(injection.file_map + injection.encrypt_offset, injection.encrypt_size, "XXXXXXXXXXXXXXXX");
 	if (parser.options.verbose)
 	{

@@ -6,16 +6,17 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/07 13:31:38 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/05/07 13:49:06 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/17 15:53:06 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdint.h>
 #include <unistd.h>
 #include <sys/syscall.h>
-#include <time.h>
+#include <linux/time.h>
+#include <stdio.h>
 
-unsigned int get_seed() {
+unsigned int get_seed_from_timestamp() {
     uint64_t timestamp;
     syscall(SYS_clock_gettime, CLOCK_REALTIME, &timestamp);
     return (unsigned int) (timestamp ^ (timestamp >> 32));

@@ -4,6 +4,7 @@ C_SRCS		= 	\
 				main.c \
 				libft.c \
 				random.c \
+				key_generator.c \
 				$(addprefix parser/, \
 					parser.c \
 					parse_options.c \

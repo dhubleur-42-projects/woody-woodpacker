@@ -1,20 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   random.h                                           :+:      :+:    :+:   */
+/*   key_generator.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/07 13:43:43 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/17 15:53:10 by dhubleur         ###   ########.fr       */
+/*   Created: 2023/11/17 15:39:07 by dhubleur          #+#    #+#             */
+/*   Updated: 2023/11/17 15:44:49 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RANDOM_H
-# define RANDOM_H
+#ifndef KEY_GENERATOR_H
+# define KEY_GENERATOR_H
 
-unsigned int get_seed_from_timestamp();
-void ft_srand(unsigned int seed);
-int ft_rand();
+# include "random.h"
+# include "parser.h"
+
+void get_key(t_options options, char buffer[17]);
 
 #endif
