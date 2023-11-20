@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 13:43:11 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/20 16:28:35 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/20 16:59:18 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,18 +56,14 @@ Elf64_Phdr *extend_and_shift_elf64(size_t payload_length, char *map, size_t map_
 		for (int j = 0; j < file_elf64.header->e_shnum; j++) {
 			if (file_elf64.sections[j].sh_offset >= old_offset)
 				file_elf64.sections[j].sh_offset += shifting;
-			if (file_elf64.sections[j].sh_addr >= file_elf64.programs[i + 1].p_vaddr)
-				file_elf64.sections[j].sh_addr += shifting;
 		}
 		for (int j = 0; j < file_elf64.header->e_phnum; j++) {
 			if (file_elf64.programs[j].p_offset >= old_offset)
-			{
 				file_elf64.programs[j].p_offset += shifting;
-				file_elf64.programs[j].p_vaddr += shifting;
-			}
 		}
 		file_elf64.header->e_shoff += shifting;
 		memmove(map + new_offset, map + old_offset, map_length - old_offset);
+		bzero(map + old_offset, shifting);
 		file_elf64.programs = (Elf64_Phdr *)(map + file_elf64.header->e_phoff);
 		available_space = file_elf64.programs[i + 1].p_offset - (file_elf64.programs[i].p_offset + file_elf64.programs[i].p_memsz);
 		if (options.verbose)
