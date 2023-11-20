@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/07 13:43:43 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/17 15:53:10 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/20 13:55:59 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,6 @@
 
 unsigned int get_seed_from_timestamp();
 void ft_srand(unsigned int seed);
-int ft_rand();
+unsigned int ft_rand();
 
 #endif
