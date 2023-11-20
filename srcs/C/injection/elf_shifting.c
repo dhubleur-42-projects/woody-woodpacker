@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 13:43:11 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/20 18:05:37 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/20 18:07:39 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	extend_and_shift_elf64(size_t payload_length, char *map, size_t map_length,
 		off_t last_address_used = file_elf64.programs[i].p_offset + file_elf64.programs[i].p_memsz + payload_length;
 		size_t bytes_used_to_align = file_elf64.programs[i + 1].p_align - last_address_used % file_elf64.programs[i + 1].p_align;
 		off_t new_offset = last_address_used + bytes_used_to_align;
-		unsigned long old_offset = file_elf64.programs[i + 1].p_offset;
+		size_t old_offset = file_elf64.programs[i + 1].p_offset;
 		off_t shifting = new_offset - old_offset;
 		if (options.verbose)
 			printf("Shifting %ld bytes with an offset of %ld\n", map_length - old_offset, shifting);
