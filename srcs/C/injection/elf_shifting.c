@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 13:43:11 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/20 16:20:09 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/20 16:28:35 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ Elf64_Phdr *extend_and_shift_elf64(size_t payload_length, char *map, size_t map_
 		if (file_elf64.programs[i + 1].p_type != PT_LOAD)
 			continue;
 		size_t available_space = file_elf64.programs[i + 1].p_offset - (file_elf64.programs[i].p_offset + file_elf64.programs[i].p_memsz);
-		printf("Available space: %lu (between 0x%.8lx and 0x%.8lx)\n", available_space, file_elf64.programs[i].p_offset + file_elf64.programs[i].p_memsz, file_elf64.programs[i + 1].p_offset);
 		off_t last_address_used = file_elf64.programs[i].p_offset + file_elf64.programs[i].p_memsz + payload_length;
 		if (options.verbose)
 			printf("Extend segment at 0x%.8lx and use it as a code cave\n", file_elf64.programs[i].p_offset);
@@ -65,14 +64,14 @@ Elf64_Phdr *extend_and_shift_elf64(size_t payload_length, char *map, size_t map_
 			{
 				file_elf64.programs[j].p_offset += shifting;
 				file_elf64.programs[j].p_vaddr += shifting;
-				file_elf64.programs[j].p_paddr += shifting;
 			}
 		}
 		file_elf64.header->e_shoff += shifting;
 		memmove(map + new_offset, map + old_offset, map_length - old_offset);
 		file_elf64.programs = (Elf64_Phdr *)(map + file_elf64.header->e_phoff);
 		available_space = file_elf64.programs[i + 1].p_offset - (file_elf64.programs[i].p_offset + file_elf64.programs[i].p_memsz);
-		printf("New available space: %lu (between 0x%.8lx and 0x%.8lx)\n", available_space, file_elf64.programs[i].p_offset + file_elf64.programs[i].p_memsz, file_elf64.programs[i + 1].p_offset);
+		if (options.verbose)
+			printf("New available space: %lu (between 0x%.8lx and 0x%.8lx)\n", available_space, file_elf64.programs[i].p_offset + file_elf64.programs[i].p_memsz, file_elf64.programs[i + 1].p_offset);
 		return (&file_elf64.programs[i]);
 	}
 	return (NULL);
