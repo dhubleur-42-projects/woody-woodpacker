@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 14:54:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 15:46:22 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/20 13:57:26 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,6 @@
 # include "prepare_injection.h"
 # include "parser.h"
 
-void inject(t_injection injection, t_options options);
+void inject(t_injection injection, t_options options, char key[17]);
 
 #endif

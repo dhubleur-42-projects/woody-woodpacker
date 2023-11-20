@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 16:27:29 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/20 13:57:41 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ size_t get_payload_length()
 	return (PAYLOAD_LENGTH);
 }
 
-void inject(t_injection injection, t_options options)
+void inject(t_injection injection, t_options options, char key[17])
 {
 	int32_t jmp_adr = (int32_t)(injection.old_entrypoint - (injection.new_entrypoint + PAYLOAD_CODE_LENGTH));
 	if (options.verbose)
@@ -38,7 +38,7 @@ void inject(t_injection injection, t_options options)
 	}
 	memcpy(jmp + 1, &jmp_adr, sizeof(jmp_adr));
 
-	memcpy(DATA_KEY, "XXXXXXXXXXXXXXXX", 16);
+	memcpy(DATA_KEY, key, 16);
 	
 	int32_t text_offset = injection.payload_offset - injection.encrypt_offset;
 	memcpy(DATA_TEXT_OFFSET, &text_offset, sizeof(text_offset));
