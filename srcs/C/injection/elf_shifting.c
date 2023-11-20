@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 13:43:11 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/20 18:07:39 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/20 18:09:48 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,5 +73,7 @@ void	extend_and_shift_elf64(size_t payload_length, char *map, size_t map_length,
 			size_t available_space = file_elf64.programs[i + 1].p_offset - (file_elf64.programs[i].p_offset + file_elf64.programs[i].p_memsz);
 			printf("New available space: %lu (between 0x%.8lx and 0x%.8lx)\n", available_space, file_elf64.programs[i].p_offset + file_elf64.programs[i].p_memsz, file_elf64.programs[i + 1].p_offset);
 		}
+
+		return ;
 	}
 }
