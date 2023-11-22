@@ -53,7 +53,7 @@ $(NAME)	:	$(OBJS)
 -include $(OBJS_DEPEND)
 
 test	:	all $(TEST_NAME)
-	./$(NAME) -v woody2
+	./$(NAME) -v $(TEST_NAME)
 
 $(TEST_NAME)	:	$(TEST_SRC)
 	$(CC) $(CFLAGS) $(TEST_SRC) -o $(TEST_NAME)
