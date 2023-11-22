@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 13:43:11 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/22 12:54:10 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/22 14:17:29 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,12 @@ void	extend_and_shift_elf64(size_t payload_length, char *map, size_t map_length,
 			file_elf64.programs[j].p_offset += shifting;
 	}
 	
-	file_elf64.header->e_shoff += shifting;
+	if (file_elf64.header->e_shoff >= old_offset)
+		file_elf64.header->e_shoff += shifting;
+	if (file_elf64.header->e_phoff >= old_offset)
+		file_elf64.header->e_phoff += shifting;
+	if (file_elf64.header->e_entry >= old_offset)
+		file_elf64.header->e_entry += shifting;
 	memmove(map + new_offset, map + old_offset, map_length - old_offset);
 	bzero(map + old_offset, shifting);
 	
