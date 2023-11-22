@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 13:43:11 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/22 14:17:29 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/22 15:26:08 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,8 @@ void	extend_and_shift_elf64(size_t payload_length, char *map, size_t map_length,
 		if (file_elf64.programs[j].p_offset >= old_offset)
 			file_elf64.programs[j].p_offset += shifting;
 	}
+
+	file_elf64.programs[code_cave_segment_idx + 1].p_flags |= PF_X;
 	
 	if (file_elf64.header->e_shoff >= old_offset)
 		file_elf64.header->e_shoff += shifting;
