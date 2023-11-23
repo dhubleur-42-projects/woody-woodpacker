@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 13:07:13 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/20 13:57:41 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/23 16:28:15 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,22 +36,22 @@ void inject(t_injection injection, t_options options, char key[17])
 		printf("Old entry point: 0x%.8lx, New entry point: 0x%.8lx\n", injection.old_entrypoint, injection.new_entrypoint);
 		printf("Computed jump: %d\n", jmp_adr);
 	}
-	memcpy(jmp + 1, &jmp_adr, sizeof(jmp_adr));
+	ft_memcpy(jmp + 1, &jmp_adr, sizeof(jmp_adr));
 
-	memcpy(DATA_KEY, key, 16);
+	ft_memcpy(DATA_KEY, key, 16);
 	
 	int32_t text_offset = injection.payload_offset - injection.encrypt_offset;
-	memcpy(DATA_TEXT_OFFSET, &text_offset, sizeof(text_offset));
+	ft_memcpy(DATA_TEXT_OFFSET, &text_offset, sizeof(text_offset));
 
 	int32_t text_len = (int32_t)(injection.encrypt_size);
-	memcpy(DATA_TEXT_LEN, &text_len, sizeof(text_len));
+	ft_memcpy(DATA_TEXT_LEN, &text_len, sizeof(text_len));
 
 	char *ptr = injection.file_map + injection.payload_offset;
-	memcpy(ptr, payload, sizeof(payload) - 1);
+	ft_memcpy(ptr, payload, sizeof(payload) - 1);
 	ptr += sizeof(payload) - 1;
-	memcpy(ptr, jmp, sizeof(jmp) - 1);
+	ft_memcpy(ptr, jmp, sizeof(jmp) - 1);
 	ptr += sizeof(jmp) - 1;
-	memcpy(ptr, data, sizeof(data) - 1);
+	ft_memcpy(ptr, data, sizeof(data) - 1);
 	if (options.verbose)
 		printf("Payload injected at: 0x%.8lx\n", injection.payload_offset);
 }

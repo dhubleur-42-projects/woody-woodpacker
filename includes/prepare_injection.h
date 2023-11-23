@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:53:20 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 17:25:19 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/23 16:26:08 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <stdbool.h>
 
 # include "parser.h"
+# include "libft.h"
 
 typedef struct s_injection
 {

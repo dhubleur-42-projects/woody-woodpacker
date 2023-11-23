@@ -6,16 +6,13 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 13:56:27 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 14:41:23 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/23 16:29:52 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "elf_parser.h"
 
 static bool parse_header(int fd, Elf64_Ehdr **header, t_options options) {
-	(void)options;
-	(void)fd;
-	(void)header;
 	*header = malloc(sizeof(Elf64_Ehdr));
 	if (*header == NULL)
 	{

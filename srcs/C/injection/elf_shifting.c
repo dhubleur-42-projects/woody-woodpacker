@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 13:43:11 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/17 15:30:15 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/23 16:26:39 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void make_space_for_new_section_elf64(size_t payload_length, Elf64_Ehdr *header,
 	size_t size_to_move = old_file_size - begin_new_section;
 	if (options.verbose)
 		printf("Created a section: begin: 0x%.8lx end: 0x%.8lx\n", begin_new_section, end_new_section);
-	memmove(output_map + end_new_section, output_map + begin_new_section, size_to_move);
+	ft_memmove(output_map + end_new_section, output_map + begin_new_section, size_to_move);
 	if (options.verbose)
 		printf("Shifted %ld bytes\n", size_to_move);
 	header->e_shoff += end_new_section - begin_new_section;

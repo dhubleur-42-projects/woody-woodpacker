@@ -2,7 +2,6 @@ NAME		=	woody_woodpacker
 
 C_SRCS		= 	\
 				main.c \
-				libft.c \
 				random.c \
 				key_generator.c \
 				$(addprefix parser/, \
@@ -28,7 +27,7 @@ OBJS_DEPEND	=	${OBJS:.o=.d}
 
 CC			=	clang
 CFLAGS		=   -Wall -Wextra -Werror -g3
-INCLUDE		=	-I includes/
+INCLUDE		=	-I includes/ -I libft
 
 ASMC		= nasm
 ASMFLAGS	= -felf64

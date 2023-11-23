@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:58:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/17 15:03:58 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/23 16:29:08 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 	}
 	if (options.verbose)
 		printf("Mapped a file of %lu bytes (extanded by %lu bytes)\n", injection->file_size, expand_size);
-	memcpy(injection->file_map, file.map, file.size);
+	ft_memcpy(injection->file_map, file.map, file.size);
 	t_file_elf64 output_file;
 	output_file.header = (Elf64_Ehdr *)injection->file_map;
 	output_file.sections = (Elf64_Shdr *)(injection->file_map + output_file.header->e_shoff);

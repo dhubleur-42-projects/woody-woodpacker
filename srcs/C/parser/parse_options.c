@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 17:42:00 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/15 18:04:35 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/23 16:30:05 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ bool parse_key(int argc, char **argv, int *current_arg, t_options *options)
 		return (false);
 	}
 	options->key = argv[++(*current_arg)];
-	if (strlen(options->key) != 16) {
+	if (ft_strlen(options->key) != 16) {
 		printf("Error: key must be 16 characters long\n");
 		return (false);
 	}

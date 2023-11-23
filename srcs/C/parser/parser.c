@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 17:37:30 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 17:24:00 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/23 16:30:38 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ bool	parse(int argc, char **argv, t_parser *parser)
 	{
 		if (argv[i][0] == '-')
 		{
-			if (strlen(argv[i]) != 2) {
+			if (ft_strlen(argv[i]) != 2) {
 				printf(USAGE_ERROR);
 				return (false);
 			}
@@ -31,7 +31,7 @@ bool	parse(int argc, char **argv, t_parser *parser)
 		else
 		{
 			if (parser->input == NULL) {
-				char *last_slash = strrchr(argv[i], '/');
+				char *last_slash = ft_strrchr(argv[i], '/');
 				if (last_slash == NULL)
 					last_slash = argv[i];
 				else
