@@ -33,7 +33,12 @@ INCLUDE		=	-I includes/
 ASMC		= nasm
 ASMFLAGS	= -felf64
 
+LIBFT		=	libft/libft.a
+
 all		:	$(NAME)
+
+$(LIBFT): FORCE
+	make -C libft
 
 build/%.o	:	srcs/C/%.c
 	@if [ ! -d $(dir $@) ]; then\
@@ -47,8 +52,8 @@ build/%.o	:	srcs/ASM/%.s
 	fi
 	$(ASMC) $(ASMFLAGS) $< -o $@
 
-$(NAME)	:	$(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+$(NAME)	:	$(OBJS) $(LIBFT)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
 
 -include $(OBJS_DEPEND)
 
@@ -65,10 +70,18 @@ clean	:
 fclean	:	clean
 	rm -f ${NAME}
 
-re		:	fclean ${NAME}
+fcleanlib: fclean
+	make -C libft fclean
+
+re		:	fclean
+			make ${NAME}
+
+relib	:	fcleanlib
+			make ${NAME}
 
 payload:
 		cd payload && sh convert_payload.sh
 
+FORCE:
 
-.PHONY	:	all clean fclean re test payload
+.PHONY	:	all clean fclean re test payload FORCE fcleanlib relib
