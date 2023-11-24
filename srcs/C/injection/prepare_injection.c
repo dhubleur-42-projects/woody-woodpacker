@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:52:59 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 17:59:15 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/24 16:58:59 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ bool	prepare_injection(t_file file, t_injection *injection, t_options options)
 	*injection = (t_injection) {-1, NULL, 0, 0, -1, 0, 0, 0};
 	if (file.type == ELF64)
 		return (prepare_injection_elf64(file, injection, options));
+	if (file.type == ELF32)
+		return (prepare_injection_elf32(file, injection, options));
 	return (false);
 }
 

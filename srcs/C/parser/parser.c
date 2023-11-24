@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 17:37:30 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/24 15:36:32 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/24 16:55:35 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,19 @@ bool get_specific_file(t_file *file, t_options options)
 		if (options.verbose)
 		{
 			printf("Successfully parsed ELF64 file\n");
+		}
+		return true;
+	}
+	else if (file->type == ELF32)
+	{
+		if (!parse_elf32(file->fd, file, options))
+		{
+			close_file(*file);
+			return false;
+		}
+		if (options.verbose)
+		{
+			printf("Successfully parsed ELF32 file\n");
 		}
 		return true;
 	}

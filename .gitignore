@@ -2,6 +2,7 @@
 build/
 woody_woodpacker
 woody
-basic_exec
+basic_exec_32
+basic_exec_64
 payload_c
 woody2

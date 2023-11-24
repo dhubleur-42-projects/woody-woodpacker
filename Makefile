@@ -7,10 +7,12 @@ C_SRCS		= 	\
 				$(addprefix parser/, \
 					parser.c \
 					parse_options.c \
-					elf64_parser.c) \
+					elf64_parser.c \
+					elf32_parser.c) \
 				$(addprefix injection/, \
 					code_cave.c \
 					prepare_injection_elf64.c \
+					prepare_injection_elf32.c \
 					prepare_injection.c \
 					inject.c)
 
@@ -18,7 +20,8 @@ ASM_SRCS	=	\
 				xor_cipher.s
 
 TEST_SRC	=	test/basic_exec.c
-TEST_NAME	=	test/basic_exec
+TEST64_NAME	=	test/basic_exec_64
+TEST32_NAME	=	test/basic_exec_32
 
 _OBJS		=	${C_SRCS:.c=.o} ${ASM_SRCS:.s=.o}
 OBJS		=	$(addprefix build/, $(_OBJS))
@@ -55,11 +58,17 @@ $(NAME)	:	$(OBJS) $(LIBFT)
 
 -include $(OBJS_DEPEND)
 
-test	:	all $(TEST_NAME)
-	./$(NAME) -v $(TEST_NAME)
+test64	:	all $(TEST64_NAME)
+	./$(NAME) -v $(TEST64_NAME)
 
-$(TEST_NAME)	:	$(TEST_SRC)
-	$(CC) $(CFLAGS) $(TEST_SRC) -o $(TEST_NAME)
+test32	:	all $(TEST32_NAME)
+	./$(NAME) -v $(TEST32_NAME)
+
+$(TEST64_NAME)	:	$(TEST_SRC)
+	$(CC) $(CFLAGS) $(TEST_SRC) -o $(TEST64_NAME)
+
+$(TEST32_NAME)	:	$(TEST_SRC)
+	$(CC) $(CFLAGS) -m32 $(TEST_SRC) -o $(TEST32_NAME)
 
 clean	:	
 	rm -Rf build/ $(TEST_NAME)

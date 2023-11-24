@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 17:35:36 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/23 16:30:12 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/24 16:54:13 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,13 @@ typedef struct s_file_elf64
 	Elf64_Shdr	*sections;
 	Elf64_Phdr	*programs;
 }	t_file_elf64;
+
+typedef struct s_file_elf32
+{
+	Elf32_Ehdr	*header;
+	Elf32_Shdr	*sections;
+	Elf32_Phdr	*programs;
+}	t_file_elf32;
 
 typedef struct s_file
 {

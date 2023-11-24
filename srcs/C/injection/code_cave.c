@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 14:54:29 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/16 15:52:16 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/24 16:58:20 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,30 @@ Elf64_Phdr *find_code_cave_elf64(t_file_elf64 file_elf64, size_t payload_size) {
 		if (available_space < payload_size)
 			continue;
 		return &(file_elf64.programs[i]);
+	}
+	return NULL;
+}
+
+size_t use_code_cave_elf32(Elf32_Ehdr *header, Elf32_Phdr *code_cave_header, size_t payload_size, t_injection *injection) {
+	header->e_entry = code_cave_header->p_vaddr + code_cave_header->p_memsz;
+	injection->new_entrypoint = header->e_entry;
+	code_cave_header->p_memsz += payload_size;
+    code_cave_header->p_filesz += payload_size;
+	return code_cave_header->p_offset + code_cave_header->p_memsz - payload_size;
+}
+
+Elf32_Phdr *find_code_cave_elf32(t_file_elf32 file_elf32, size_t payload_size) {
+	for (int i = 0; i < file_elf32.header->e_phnum - 1; i++) {
+		if (file_elf32.programs[i].p_type != PT_LOAD)
+			continue;
+		if (!(file_elf32.programs[i].p_flags & PF_X))
+			continue;
+		if (file_elf32.programs[i + 1].p_type != PT_LOAD)
+			continue;
+		size_t available_space = file_elf32.programs[i + 1].p_offset - (file_elf32.programs[i].p_offset + file_elf32.programs[i].p_memsz);
+		if (available_space < payload_size)
+			continue;
+		return &(file_elf32.programs[i]);
 	}
 	return NULL;
 }
