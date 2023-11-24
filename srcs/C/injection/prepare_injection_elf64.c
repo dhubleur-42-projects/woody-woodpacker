@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:58:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/23 16:29:08 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/24 15:23:30 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 {
 	t_file_elf64 file_efl64 = *((t_file_elf64 *)file.specific_file);
 	Elf64_Phdr *code_cave = find_code_cave_elf64(file_efl64, get_payload_length());
-	size_t expand_size = 0;
 	injection->old_entrypoint = file_efl64.header->e_entry;
 	if (code_cave != NULL)
 	{
@@ -47,8 +46,7 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 	else
 	{
 		if (options.verbose)
-			printf("No code cave found, need to extend file\n");
-		expand_size = get_extend_size_elf64(get_payload_length());
+			printf("No code cave found, impossible to inject payload\n");
 	}
 	injection->fd = open("woody", O_CREAT | O_RDWR | O_TRUNC, 0777);
 	if (injection->fd == -1)
@@ -56,7 +54,7 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 		perror("Cannot open file");
 		return false;
 	}
-	injection->file_size = file.size + expand_size;
+	injection->file_size = file.size;
 	if (lseek(injection->fd, injection->file_size-1, SEEK_SET) == -1)
 	{
 		perror("Cannot seek file");
@@ -68,27 +66,16 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 		perror("Cannot map output file");
 		return false;
 	}
-	if (options.verbose)
-		printf("Mapped a file of %lu bytes (extanded by %lu bytes)\n", injection->file_size, expand_size);
 	ft_memcpy(injection->file_map, file.map, file.size);
 	t_file_elf64 output_file;
 	output_file.header = (Elf64_Ehdr *)injection->file_map;
 	output_file.sections = (Elf64_Shdr *)(injection->file_map + output_file.header->e_shoff);
 	output_file.programs = (Elf64_Phdr *)(injection->file_map + output_file.header->e_phoff);
+
 	code_cave = find_code_cave_elf64(output_file, get_payload_length());
-	
-	if (code_cave == NULL) {
-		injection->payload_offset = extend_and_shift_elf64(get_payload_length(), output_file, injection->file_map, file.size, injection, options);
-		output_file.header = (Elf64_Ehdr *)injection->file_map;
-		output_file.sections = (Elf64_Shdr *)(injection->file_map + output_file.header->e_shoff);
-		output_file.programs = (Elf64_Phdr *)(injection->file_map + output_file.header->e_phoff);
-	}
-	else
-	{
-		injection->payload_offset = use_code_cave_elf64(output_file.header, code_cave, get_payload_length(), injection);
-		if (options.verbose)
-			printf("Code cave header modified, new end: 0x%.8lx\n", code_cave->p_offset + code_cave->p_memsz);
-	}
+	injection->payload_offset = use_code_cave_elf64(output_file.header, code_cave, get_payload_length(), injection);
+	if (options.verbose)
+		printf("Code cave header modified, new end: 0x%.8lx\n", code_cave->p_offset + code_cave->p_memsz);
 
 	Elf64_Shdr *text_section = get_section(".text", output_file.header, output_file.sections);
 	if (text_section == NULL)

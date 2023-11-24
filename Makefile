@@ -10,7 +10,6 @@ C_SRCS		= 	\
 					elf64_parser.c) \
 				$(addprefix injection/, \
 					code_cave.c \
-					elf_shifting.c \
 					prepare_injection_elf64.c \
 					prepare_injection.c \
 					inject.c)
