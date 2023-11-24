@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:58:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/24 15:24:07 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/24 15:37:16 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ Elf64_Shdr *get_section(char *name, Elf64_Ehdr *header, Elf64_Shdr *section_head
 	i = 0;
 	while (i < header->e_shnum - 1)
 	{
-		if (strcmp(name, get_section_name(header, section_headers, i)) == 0)
+		if (ft_strcmp(name, get_section_name(header, section_headers, i)) == 0)
 			return (&section_headers[i]);
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 15:38:53 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/23 16:31:14 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/24 15:36:43 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void get_key(t_options options, char buffer[17])
 {
 	if (options.key)
 	{
-		strcpy(buffer, options.key);
+		ft_strcpy(buffer, options.key);
 	}
 	else
 	{
