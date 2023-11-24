@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 13:56:27 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/23 16:29:52 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/24 16:19:58 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,6 +161,25 @@ bool parse_elf64(int fd, t_file *file, t_options options)
 		return false;
     }
 	file->size = file_size;
+	unsigned long size_to_compare = 0 + file_size;
+
+	for (int i = 0; i < header->e_phnum; i++)
+	{
+		if (program_header[i].p_offset + program_header[i].p_filesz > size_to_compare)
+		{
+			dprintf(2, "Invalid file (Program header %i is out of file)\n", i);
+			return false;
+		}
+	}
+	
+	for (int i = 0; i < header->e_shnum; i++)
+	{
+		if (sections_header[i].sh_offset + sections_header[i].sh_size > size_to_compare)
+		{
+			dprintf(2, "Invalid file (Sections header %i is out of file)\n", i);
+			return false;
+		}
+	}
 
     void *input_file_map = mmap(NULL, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
     if (input_file_map == MAP_FAILED) {
