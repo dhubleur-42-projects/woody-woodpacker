@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:58:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/24 15:23:30 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/24 15:24:07 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ bool	prepare_injection_elf64(t_file file, t_injection *injection, t_options opti
 	{
 		if (options.verbose)
 			printf("No code cave found, impossible to inject payload\n");
+		return false;
 	}
 	injection->fd = open("woody", O_CREAT | O_RDWR | O_TRUNC, 0777);
 	if (injection->fd == -1)
