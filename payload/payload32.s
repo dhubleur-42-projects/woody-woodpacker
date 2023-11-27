@@ -6,7 +6,6 @@ _start:
 		; save registers
 		push eax
 		push edi
-		push esi
 		push edx
 		push ebx
 		push ecx
@@ -17,21 +16,21 @@ _start:
 		mov dl, 10
 		inc eax
 		mov ebx, 1
-		lea ecx, [msg]
+		lea ecx, [rel msg]
 		mov eax, 4
 		int 0x80
 
 		; uncipher
-		lea edi, [esi + (_start - msg)]         ; payload address
-		sub edi, [esi + (text_offset - msg)]    ; edi = .text address
-		mov esi, [data_len]                     ; esi = .data size
+		lea edi, [ecx + (_start - msg)]         ; payload address
+		sub edi, [ecx + (text_offset - msg)]    ; edi = .text address
+		mov ecx, [data_len]                     ; ecx = .text size
 		lea edx, [key]                          ; edx = key address
 
 		push edx
 		jmp xor_loop
 
 		xor_loop:
-			cmp esi, 0           ; Check if size is 0
+			cmp ecx, 0           ; Check if size is 0
 			je xor_end
 
 			mov al, [edi]        ; Load current byte of data
@@ -42,7 +41,7 @@ _start:
 			inc edi              ; Increment data pointer
 			inc edx              ; Increment key pointer
 
-			dec esi              ; Decrement size
+			dec ecx              ; Decrement size
 
 			cmp byte [edx], 0    ; Check if the current byte of key is '\0'
 			je reset_key
@@ -60,7 +59,6 @@ _start:
 			pop ecx
 			pop ebx
 			pop edx
-			pop esi
 			pop edi
 			pop eax
 

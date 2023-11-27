@@ -22,7 +22,7 @@ _start:
 		; uncipher
   		lea rdi, [rsi + (_start - msg)] 		;payload address
   		sub rdi, [rsi + (text_offset - msg)] 	;rdi = .text address
-		mov rsi, [rel data_len]					;rsi = .data size
+		mov rsi, [rel data_len]					;rsi = .text size
 		lea rdx, [rel key]						;rdx = key address
 		
 		push rdx 
