@@ -9,14 +9,16 @@ _start:
 		push esi
 		push edx
 		push ebx
+		push ecx
 
 		; print message
 		xor eax, eax
 		cdq
 		mov dl, 10
 		inc eax
-		mov edi, eax
-		lea esi, [msg]
+		mov ebx, 1
+		lea ecx, [msg]
+		mov eax, 4
 		int 0x80
 
 		; uncipher
@@ -55,6 +57,8 @@ _start:
 		xor_end:
 			pop ebx
 
+			pop ecx
+			pop ebx
 			pop edx
 			pop esi
 			pop edi
@@ -65,5 +69,5 @@ _start:
 
 msg     	db "..WOODY..",10
 key     	db "XXXXXXXXXXXXXXXX",0	
-text_offset dq 0x00000000
-data_len 	dq 0x00000000
+text_offset dd 0x00000000
+data_len 	dd 0x00000000
