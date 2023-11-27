@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 14:58:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/24 16:59:42 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/11/27 14:27:54 by dhubleur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,9 @@ static Elf32_Shdr *get_section(char *name, Elf32_Ehdr *header, Elf32_Shdr *secti
 
 bool	prepare_injection_elf32(t_file file, t_injection *injection, t_options options)
 {
+	injection->payload_type = ELF32;
 	t_file_elf32 file_efl32 = *((t_file_elf32 *)file.specific_file);
-	Elf32_Phdr *code_cave = find_code_cave_elf32(file_efl32, get_payload_length());
+	Elf32_Phdr *code_cave = find_code_cave_elf32(file_efl32, get_payload_length(ELF32));
 	injection->old_entrypoint = file_efl32.header->e_entry;
 	if (code_cave != NULL)
 	{
@@ -73,10 +74,10 @@ bool	prepare_injection_elf32(t_file file, t_injection *injection, t_options opti
 	output_file.sections = (Elf32_Shdr *)(injection->file_map + output_file.header->e_shoff);
 	output_file.programs = (Elf32_Phdr *)(injection->file_map + output_file.header->e_phoff);
 
-	code_cave = find_code_cave_elf32(output_file, get_payload_length());
-	injection->payload_offset = use_code_cave_elf32(output_file.header, code_cave, get_payload_length(), injection);
+	code_cave = find_code_cave_elf32(output_file, get_payload_length(ELF32));
+	injection->payload_offset = use_code_cave_elf32(output_file.header, code_cave, get_payload_length(ELF32), injection);
 	if (options.verbose)
-		printf("Code cave header modified, new end: 0x%.8x\n", code_cave->p_offset + code_cave->p_memsz);
+		printf("Code cave header modified, new end: 0x%.8x (for a payload of %ld bytes)\n", code_cave->p_offset + code_cave->p_memsz, get_payload_length(ELF32));
 
 	Elf32_Shdr *text_section = get_section(".text", output_file.header, output_file.sections);
 	if (text_section == NULL)
