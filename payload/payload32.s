@@ -18,10 +18,10 @@ _start:
 		int 0x80
 
 		; uncipher
-		lea eax, [ecx + (_start - msg)]         ; payload address
-		sub eax, [ecx + (text_offset - msg)]    ; eax = .text address
-		mov ebx, [data_len]                     ; ebx = .text size
-		lea ecx, [key]                          ; ecx = key address
+		lea eax, [ecx + (_start - msg)]         	; payload address
+		sub eax, [ecx + (text_offset - msg)]    	; eax = .text address
+		mov ebx, [rel data_len]                     ; ebx = .text size
+		lea ecx, [rel key]                          ; ecx = key address
 
 		push ecx
 		jmp xor_loop
