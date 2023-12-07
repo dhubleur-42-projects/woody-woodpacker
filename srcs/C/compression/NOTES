@@ -1,0 +1,20 @@
+Compression
+
+On applique la compression
+On va vouloir, allez, un buffer de 2k, au pire on l'augmentera
+
+On va créer une structure "File" qui contiendra un fd, un buffer, l'index du caractère en cours
+On aura une fonction get_next_char qui va nous envoyer l'index du prochain caractère. Si y'a besoin de remplir le buffer, il remplit le buffer
+Ça sera pas une structure File universelle, ça sera que pour cette particularité de moitié rempli, moitié search buffer
+
+
+# Dans le cas où on a bien avancé dans le fichier
+min_search_buffer = (i + LEN_FILE_BUFFER - LEN_SEARCH_BUFFER) % LEN_FILE_BUFFER
+i_search_buffer (from min_search_buffer until == i) = (i_search_buffer + i) % LEN_FILE_BUFFER
+# Dans le cas où on a lu au total moins de LEN_SEARCH_BUFFER caractères
+min_search_buffer = 0
+i_search_buffer = pareil qu'au dessus
+# Def
+i=>Caractère qu'on est en train d'ajouter
+LEN_SEARCH_BUFFER=>Longueur du lookup en arrière. On va prendre 2k
+LEN_FILE_BUFFER=>Longueur du buffer de fichier, LEN_SEARCH_BUFFER * 2 suffit

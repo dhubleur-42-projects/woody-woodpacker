@@ -6,7 +6,7 @@
 /*   By: dhubleur <dhubleur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 15:02:19 by dhubleur          #+#    #+#             */
-/*   Updated: 2023/11/20 13:57:14 by dhubleur         ###   ########.fr       */
+/*   Updated: 2023/12/07 23:32:37 by jmaia            ###   ###               */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ int	main(int ac, char **av) {
 	char key[17];
 	get_key(parser.options, key);
 	printf("Key: %s\n", key);
-	xor_cipher(injection.file_map + injection.encrypt_offset, injection.encrypt_size, key);
+	compress(injection.file_map + injection.encrypt_offset, injection.encrypt_size);
+//	xor_cipher(injection.file_map + injection.encrypt_offset, injection.encrypt_size, key);
 	if (parser.options.verbose)
 	{
 		printf("Cipher applied on %d bytes\n", injection.encrypt_size);

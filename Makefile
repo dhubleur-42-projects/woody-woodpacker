@@ -14,7 +14,8 @@ C_SRCS		= 	\
 					prepare_injection_elf64.c \
 					prepare_injection_elf32.c \
 					prepare_injection.c \
-					inject.c)
+					inject.c) \
+				compression/compression.c
 
 ASM_SRCS	=	\
 				xor_cipher.s
